@@ -71,19 +71,19 @@ export default function AddPage() {
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 sm:px-6 py-2.5 sm:py-3">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" asChild>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" asChild className="flex-shrink-0">
               <Link href="/" aria-label="Geri">
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </Button>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-lg font-semibold tracking-tight">
-                Film veya Dizi Ekle
-              </h1>
+            <h1 className="text-base sm:text-lg font-semibold tracking-tight flex-1 min-w-0 truncate">
+              Film veya Dizi Ekle
+            </h1>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <LogoutButton />
+              <ThemeToggle />
             </div>
-            <LogoutButton />
-            <ThemeToggle />
           </div>
         </div>
       </header>

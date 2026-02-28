@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { ChevronRight, Circle, CircleCheck } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { formatRuntime } from "@/lib/utils";
 import type { TVSeason } from "../types";
 import type { TMDBDetail } from "../types";
@@ -9,19 +9,15 @@ import type { TMDBDetail } from "../types";
 interface ContentDetailSeasonsProps {
   seasons: TVSeason[];
   detail: TMDBDetail;
-  watchedEpisodes: Record<string, boolean>;
   expandedSeasons: Set<number>;
   onExpandedSeasonsChange: (fn: (prev: Set<number>) => Set<number>) => void;
-  onEpisodeToggle: (key: string, next: boolean) => void;
 }
 
 export function ContentDetailSeasons({
   seasons,
   detail,
-  watchedEpisodes,
   expandedSeasons,
   onExpandedSeasonsChange,
-  onEpisodeToggle,
 }: ContentDetailSeasonsProps) {
   const seasonRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const isInitialMount = useRef(true);
@@ -79,43 +75,20 @@ export function ContentDetailSeasons({
                 <div className="divide-y divide-border/50">
                   {season.episodes.map((ep) => {
                     const key = `S${season.seasonNumber}E${ep.episodeNumber}`;
-                    const isWatched = watchedEpisodes[key] ?? false;
                     return (
                       <div
                         key={key}
-                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 px-3 sm:px-4 py-2 hover:bg-muted/20"
+                        className="flex items-center gap-2 px-3 sm:px-4 py-2 hover:bg-muted/20"
                       >
-                        <div className="min-w-0 flex-1 flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onEpisodeToggle(key, !isWatched);
-                            }}
-                            className="flex-shrink-0 p-0.5 rounded focus:outline-none focus:ring-2 focus:ring-ring"
-                            title={isWatched ? "İzlenmedi olarak işaretle" : "İzlendi olarak işaretle"}
-                            aria-label={isWatched ? "İzlenmedi" : "İzlendi"}
-                          >
-                            {isWatched ? (
-                              <CircleCheck className="h-5 w-5 text-green-600 dark:text-green-500" />
-                            ) : (
-                              <Circle className="h-5 w-5 text-muted-foreground/50 hover:text-muted-foreground" />
-                            )}
-                          </button>
-                          <span className="text-xs font-mono text-muted-foreground">
-                            S{season.seasonNumber}E{ep.episodeNumber}
+                        <span className="text-xs font-mono text-muted-foreground">
+                          S{season.seasonNumber}E{ep.episodeNumber}
+                        </span>
+                        {ep.runtime != null && ep.runtime > 0 && (
+                          <span className="text-xs text-muted-foreground">
+                            {formatRuntime(ep.runtime)}
                           </span>
-                          {ep.runtime != null && ep.runtime > 0 && (
-                            <span className="text-xs text-muted-foreground">
-                              {formatRuntime(ep.runtime)}
-                            </span>
-                          )}
-                          <span
-                            className={`text-sm line-clamp-1 ${isWatched ? "text-muted-foreground" : ""}`}
-                          >
-                            {ep.name}
-                          </span>
-                        </div>
+                        )}
+                        <span className="text-sm line-clamp-1">{ep.name}</span>
                       </div>
                     );
                   })}

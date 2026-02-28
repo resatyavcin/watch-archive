@@ -8,13 +8,12 @@ export function LogoutButton() {
   return (
     <Button
       variant="ghost"
-      size="sm"
+      size="icon"
       onClick={() => signOut({ callbackUrl: "/login" })}
-      className="text-muted-foreground hover:text-foreground gap-1.5"
+      className="text-muted-foreground hover:text-foreground"
       aria-label="Çıkış yap"
     >
       <LogOut className="h-4 w-4" />
-      Çıkış
     </Button>
   );
 }

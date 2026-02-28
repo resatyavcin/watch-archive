@@ -143,13 +143,13 @@ export default function PersonPage() {
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
         <div className="container mx-auto px-4 sm:px-6 py-2.5">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => router.back()} className="flex-shrink-0">
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <h1 className="text-lg font-semibold truncate">{person.name}</h1>
+            <h1 className="text-base sm:text-lg font-semibold truncate flex-1 min-w-0">{person.name}</h1>
             {person.imdbId && (
-              <Button variant="outline" size="sm" asChild className="ml-auto">
+              <Button variant="outline" size="sm" asChild className="flex-shrink-0">
                 <a
                   href={`https://www.imdb.com/name/${person.imdbId}/`}
                   target="_blank"
@@ -157,7 +157,7 @@ export default function PersonPage() {
                   className="gap-1.5"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
-                  IMDB
+                  <span className="hidden sm:inline">IMDB</span>
                 </a>
               </Button>
             )}

@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "İzleme Arşivi",
-    short_name: "İzleme Arşivi",
+    name: "Watch Archive",
+    short_name: "Watch Archive",
     description: "İzlediğiniz film ve dizileri takip edin, puanlayın ve arşivleyin.",
     start_url: "/",
     display: "standalone",

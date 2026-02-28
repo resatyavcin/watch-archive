@@ -10,10 +10,8 @@ function toDbRow(item: Record<string, unknown>) {
     releaseYear: "release_year",
     watchedAt: "watched_at",
     isFavorite: "is_favorite",
-    episodeRatings: "episode_ratings",
     watchingStatus: "watching_status",
     watchedProgressSeconds: "watched_progress_seconds",
-    watchedEpisodes: "watched_episodes",
     originCountry: "origin_country",
   };
   for (const [k, v] of Object.entries(item)) {
@@ -31,10 +29,8 @@ function toItem(row: Record<string, unknown>) {
     release_year: "releaseYear",
     watched_at: "watchedAt",
     is_favorite: "isFavorite",
-    episode_ratings: "episodeRatings",
     watching_status: "watchingStatus",
     watched_progress_seconds: "watchedProgressSeconds",
-    watched_episodes: "watchedEpisodes",
     origin_country: "originCountry",
   };
   const item: Record<string, unknown> = {};

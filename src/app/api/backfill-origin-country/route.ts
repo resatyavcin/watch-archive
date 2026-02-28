@@ -1,15 +1,9 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { getSupabaseAdmin } from "@/lib/supabase-server";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 
 export async function POST() {
-  const session = await auth();
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const apiKey = process.env.TMDB_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: "TMDB_API_KEY not set" }, { status: 500 });
@@ -20,7 +14,6 @@ export async function POST() {
   const { data: rows, error } = await supabase
     .from("watched_items")
     .select("id, tmdb_id, type")
-    .eq("user_id", session.user.email)
     .is("origin_country", null);
 
   if (error) {

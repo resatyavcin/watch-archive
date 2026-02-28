@@ -88,10 +88,6 @@ export default function ContentDetailPage() {
       ...(detail.type === "movie" &&
         progressSec != null &&
         progressSec > 0 && { watchedProgressSeconds: progressSec }),
-      ...(detail.type === "tv" &&
-        Object.keys(form.watchedEpisodes).length > 0 && { watchedEpisodes: { ...form.watchedEpisodes } }),
-      ...(detail.type === "tv" &&
-        Object.keys(form.episodeRatings).length > 0 && { episodeRatings: { ...form.episodeRatings } }),
     });
     form.setExistingItem(saved);
     form.setAsDropped(true);
@@ -169,10 +165,6 @@ export default function ContentDetailPage() {
         ...(detail.type === "movie" &&
           progressSec != null &&
           progressSec > 0 && { watchedProgressSeconds: progressSec }),
-        ...(detail.type === "tv" &&
-          Object.keys(form.watchedEpisodes).length > 0 && { watchedEpisodes: { ...form.watchedEpisodes } }),
-        ...(detail.type === "tv" &&
-          Object.keys(form.episodeRatings).length > 0 && { episodeRatings: { ...form.episodeRatings } }),
       });
       form.setExistingItem(saved);
       setSheetOpen(false);
@@ -182,24 +174,6 @@ export default function ContentDetailPage() {
       setAdding(false);
     }
   }, [detail, form, upsertWatched, removeFromWatchlist, router]);
-
-  const handleEpisodeToggle = useCallback(
-    async (key: string, next: boolean) => {
-      form.setWatchedEpisodes((prev) => ({ ...prev, [key]: next }));
-      if (form.existingItem && detail) {
-        const updatedEpisodes = { ...form.watchedEpisodes, [key]: next };
-        const saved = await upsertWatched({
-          ...form.existingItem,
-          tmdbId: detail.id,
-          title: detail.title,
-          type: detail.type as "movie" | "tv",
-          watchedEpisodes: updatedEpisodes,
-        });
-        form.setExistingItem(saved);
-      }
-    },
-    [form, detail, upsertWatched],
-  );
 
   const handleSheetOpenForDropped = useCallback(() => {
     form.setAsDropped(true);
@@ -302,10 +276,8 @@ export default function ContentDetailPage() {
               <ContentDetailSeasons
                 seasons={seasons}
                 detail={detail}
-                watchedEpisodes={form.watchedEpisodes}
                 expandedSeasons={expandedSeasons}
                 onExpandedSeasonsChange={setExpandedSeasons}
-                onEpisodeToggle={handleEpisodeToggle}
               />
               <ContentDetailActions
                 detail={detail}
@@ -367,10 +339,8 @@ export default function ContentDetailPage() {
           <ContentDetailSeasons
             seasons={seasons}
             detail={detail}
-            watchedEpisodes={form.watchedEpisodes}
             expandedSeasons={expandedSeasons}
             onExpandedSeasonsChange={setExpandedSeasons}
-            onEpisodeToggle={handleEpisodeToggle}
           />
           <ContentDetailActions
             detail={detail}

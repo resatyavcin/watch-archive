@@ -6,7 +6,7 @@ import { AuthProvider } from "@/components/auth-provider";
 import { WatchProvider } from "@/components/watch-provider";
 
 export const metadata: Metadata = {
-  title: "İzleme Arşivi",
+  title: "Watch Archive",
   description: "İzlediğiniz film ve dizileri takip edin, puanlayın ve arşivleyin.",
 };
 

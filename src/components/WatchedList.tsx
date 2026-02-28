@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { WatchedCard } from "./WatchedCard";
@@ -42,6 +42,7 @@ interface PopularItem {
 export function WatchedList() {
   const { items, watchlist, loading } = useWatch();
   const [listType, setListType] = useState<"movie" | "tv">("movie");
+  const initialCategorySet = useRef(false);
   const [popularType, setPopularType] = useState<"movie" | "tv">("movie");
   const [popular, setPopular] = useState<PopularItem[]>([]);
   const [popularLoading, setPopularLoading] = useState(true);
@@ -75,6 +76,26 @@ export function WatchedList() {
 
   const sortedMovies = sorted.filter((i) => i.type === "movie");
   const sortedTv = sorted.filter((i) => i.type === "tv");
+
+  // İlk yüklemede içeriği olan kategoriyi varsayılan göster (eklenen kategori önce)
+  useEffect(() => {
+    if (loading || initialCategorySet.current) return;
+    // Ref'i sadece gerçekten seçim yaptığımızda veya veri hazır olduğunda set et;
+    // böylece ilk açılışta items boşken ref kilitlenmez, veri gelince tekrar çalışır.
+    if (sortedMovies.length > 0) {
+      initialCategorySet.current = true;
+      setListType("movie");
+    } else if (sortedTv.length > 0) {
+      initialCategorySet.current = true;
+      setListType("tv");
+    } else if (items.length === 0) {
+      // Henüz veri yok, ref'i set etme; veri gelince effect tekrar çalışsın
+      return;
+    } else {
+      // Veri var ama her iki kategori de boş (kullanıcı hiç ekleme yapmamış)
+      initialCategorySet.current = true;
+    }
+  }, [loading, items.length, sortedMovies.length, sortedTv.length]);
 
   return (
     <div className="min-h-screen">
@@ -113,6 +134,101 @@ export function WatchedList() {
       </header>
 
       <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Flame className="h-5 w-5 text-orange-500 dark:text-orange-400" />
+            <h2 className="text-lg font-semibold">Popüler</h2>
+          </div>
+          <div className="flex gap-2 mb-4">
+            <Button
+              variant={popularType === "movie" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setPopularType("movie")}
+              className={
+                popularType === "movie"
+                  ? "bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400"
+                  : ""
+              }
+            >
+              <Film className="h-4 w-4" />
+              Film
+            </Button>
+            <Button
+              variant={popularType === "tv" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setPopularType("tv")}
+              className={
+                popularType === "tv"
+                  ? "bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-400"
+                  : ""
+              }
+            >
+              <Tv className="h-4 w-4" />
+              Dizi
+            </Button>
+          </div>
+          {popularLoading ? (
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="flex-shrink-0 w-[100px] sm:w-[120px]">
+                  <Skeleton className="aspect-[2/3] rounded-lg mb-1" />
+                  <Skeleton className="h-3 w-full rounded mt-1" />
+                  <Skeleton className="h-2.5 w-12 rounded mt-1" />
+                </div>
+              ))}
+            </div>
+          ) : popular.length > 0 ? (
+            <ScrollRow>
+              {popular.map((p) => {
+                const inWatchlist = watchlist.some(
+                  (w) => w.tmdbId === p.id && w.type === p.type,
+                );
+                return (
+                  <Link
+                    key={`${p.type}-${p.id}`}
+                    href={`/add/${p.type}/${p.id}`}
+                    className="flex-shrink-0 w-[100px] sm:w-[120px] group relative"
+                  >
+                    <div className="aspect-[2/3] rounded-lg overflow-hidden bg-muted transition-transform group-hover:scale-[1.02] mb-1 relative">
+                      {p.posterPath ? (
+                        <Image
+                          src={p.posterPath}
+                          alt={p.title}
+                          width={120}
+                          height={180}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          {p.type === "movie" ? (
+                            <Film className="w-10 h-10 text-muted-foreground/50" />
+                          ) : (
+                            <Tv className="w-10 h-10 text-muted-foreground/50" />
+                          )}
+                        </div>
+                      )}
+                      {inWatchlist && (
+                        <span
+                          className="absolute top-1 right-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white dark:bg-blue-400"
+                          title="İzleyeceğim listesinde"
+                        >
+                          <BookmarkCheck className="h-3 w-3" />
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs font-medium truncate">{p.title}</p>
+                    {p.releaseYear && (
+                      <p className="text-[10px] text-muted-foreground">
+                        {p.releaseYear}
+                      </p>
+                    )}
+                  </Link>
+                );
+              })}
+            </ScrollRow>
+          ) : null}
+        </section>
+
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-4">
           <div className="flex items-center gap-2">
             <Bookmark className="h-5 w-5 text-amber-500 dark:text-amber-400" />
@@ -249,101 +365,6 @@ export function WatchedList() {
             </div>
           </>
         )}
-
-        <section className="mt-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Flame className="h-5 w-5 text-orange-500 dark:text-orange-400" />
-            <h2 className="text-lg font-semibold">Popüler</h2>
-          </div>
-          <div className="flex gap-2 mb-4">
-            <Button
-              variant={popularType === "movie" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setPopularType("movie")}
-              className={
-                popularType === "movie"
-                  ? "bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400"
-                  : ""
-              }
-            >
-              <Film className="h-4 w-4" />
-              Film
-            </Button>
-            <Button
-              variant={popularType === "tv" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setPopularType("tv")}
-              className={
-                popularType === "tv"
-                  ? "bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-400"
-                  : ""
-              }
-            >
-              <Tv className="h-4 w-4" />
-              Dizi
-            </Button>
-          </div>
-          {popularLoading ? (
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-[100px] sm:w-[120px]">
-                  <Skeleton className="aspect-[2/3] rounded-lg mb-1" />
-                  <Skeleton className="h-3 w-full rounded mt-1" />
-                  <Skeleton className="h-2.5 w-12 rounded mt-1" />
-                </div>
-              ))}
-            </div>
-          ) : popular.length > 0 ? (
-            <ScrollRow>
-              {popular.map((p) => {
-                const inWatchlist = watchlist.some(
-                  (w) => w.tmdbId === p.id && w.type === p.type,
-                );
-                return (
-                  <Link
-                    key={`${p.type}-${p.id}`}
-                    href={`/add/${p.type}/${p.id}`}
-                    className="flex-shrink-0 w-[100px] sm:w-[120px] group relative"
-                  >
-                    <div className="aspect-[2/3] rounded-lg overflow-hidden bg-muted transition-transform group-hover:scale-[1.02] mb-1 relative">
-                      {p.posterPath ? (
-                        <Image
-                          src={p.posterPath}
-                          alt={p.title}
-                          width={120}
-                          height={180}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          {p.type === "movie" ? (
-                            <Film className="w-10 h-10 text-muted-foreground/50" />
-                          ) : (
-                            <Tv className="w-10 h-10 text-muted-foreground/50" />
-                          )}
-                        </div>
-                      )}
-                      {inWatchlist && (
-                        <span
-                          className="absolute top-1 right-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white dark:bg-blue-400"
-                          title="İzleyeceğim listesinde"
-                        >
-                          <BookmarkCheck className="h-3 w-3" />
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs font-medium truncate">{p.title}</p>
-                    {p.releaseYear && (
-                      <p className="text-[10px] text-muted-foreground">
-                        {p.releaseYear}
-                      </p>
-                    )}
-                  </Link>
-                );
-              })}
-            </ScrollRow>
-          ) : null}
-        </section>
       </main>
     </div>
   );
