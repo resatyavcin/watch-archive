@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { WatchProvider } from "@/components/watch-provider";
+import { AppShell } from "@/components/AppShell";
+import { Toaster } from "@/components/Toaster";
 
 export const metadata: Metadata = {
   title: "Watch Archive",
@@ -28,7 +30,8 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <WatchProvider>
-              {children}
+              <AppShell>{children}</AppShell>
+            <Toaster />
             </WatchProvider>
           </AuthProvider>
         </ThemeProvider>

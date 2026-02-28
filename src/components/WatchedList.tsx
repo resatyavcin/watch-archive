@@ -46,6 +46,8 @@ export function WatchedList() {
   const [popularType, setPopularType] = useState<"movie" | "tv">("movie");
   const [popular, setPopular] = useState<PopularItem[]>([]);
   const [popularLoading, setPopularLoading] = useState(true);
+  const [turkeyPopular, setTurkeyPopular] = useState<PopularItem[]>([]);
+  const [turkeyPopularLoading, setTurkeyPopularLoading] = useState(true);
 
   const fetchPopular = useCallback(async () => {
     setPopularLoading(true);
@@ -66,9 +68,32 @@ export function WatchedList() {
     }
   }, [popularType]);
 
+  const fetchTurkeyPopular = useCallback(async () => {
+    setTurkeyPopularLoading(true);
+    try {
+      const { data, ok } = await cachedFetch<{ results: PopularItem[] }>(
+        "/api/popular?type=movie&region=TR",
+        CACHE_TTL.long,
+      );
+      if (ok && data?.results) {
+        setTurkeyPopular(data.results);
+      } else {
+        setTurkeyPopular([]);
+      }
+    } catch {
+      setTurkeyPopular([]);
+    } finally {
+      setTurkeyPopularLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchPopular();
   }, [fetchPopular]);
+
+  useEffect(() => {
+    fetchTurkeyPopular();
+  }, [fetchTurkeyPopular]);
 
   const sorted = [...items].sort(
     (a, b) => new Date(b.watchedAt).getTime() - new Date(a.watchedAt).getTime(),
@@ -101,25 +126,23 @@ export function WatchedList() {
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 sm:px-6 py-2.5 sm:py-3">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
-            <Link href="/" className="group flex items-center gap-2 sm:gap-2.5">
-              <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-amber-500/15 dark:bg-amber-400/15 ring-1 ring-amber-500/20 dark:ring-amber-400/20 transition-colors group-hover:bg-amber-500/25 dark:group-hover:bg-amber-400/25">
+          <div className="flex items-center justify-center sm:justify-between gap-2 sm:gap-3">
+            <Link
+              href="/"
+              className="group flex w-full sm:w-auto items-center justify-center sm:justify-start gap-2 sm:gap-2.5"
+            >
+              <div className="hidden sm:flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-amber-500/15 dark:bg-amber-400/15 ring-1 ring-amber-500/20 dark:ring-amber-400/20 transition-colors group-hover:bg-amber-500/25 dark:group-hover:bg-amber-400/25">
                 <Clapperboard className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600 dark:text-amber-400" />
               </div>
-              <div>
-                <h1 className="text-lg sm:text-xl font-bold tracking-tight">
-                  <span className="text-foreground">Watch</span>
-                  <span className="text-amber-600 dark:text-amber-400">
-                    Archive
-                  </span>
-                </h1>
-                <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
-                  İzlediğin film ve dizileri takip et
-                </p>
-              </div>
+              <h1 className="text-lg sm:text-xl font-bold tracking-tight">
+                <span className="text-foreground">Watch</span>
+                <span className="text-amber-600 dark:text-amber-400">
+                  Archive
+                </span>
+              </h1>
             </Link>
 
-            <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2">
               <Button size="sm" asChild>
                 <Link href="/add">
                   <Search className="h-4 w-4" />
@@ -229,16 +252,77 @@ export function WatchedList() {
           ) : null}
         </section>
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-4">
-          <div className="flex items-center gap-2">
-            <Bookmark className="h-5 w-5 text-amber-500 dark:text-amber-400" />
-            <h2 className="text-lg font-semibold">Tüm listem</h2>
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Film className="h-5 w-5 text-red-500 dark:text-red-400" />
+            <h2 className="text-lg font-semibold">Türkiye sinemasında popüler</h2>
           </div>
+          {turkeyPopularLoading ? (
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="flex-shrink-0 w-[100px] sm:w-[120px]">
+                  <Skeleton className="aspect-[2/3] rounded-lg mb-1" />
+                  <Skeleton className="h-3 w-full rounded mt-1" />
+                  <Skeleton className="h-2.5 w-12 rounded mt-1" />
+                </div>
+              ))}
+            </div>
+          ) : turkeyPopular.length > 0 ? (
+            <ScrollRow>
+              {turkeyPopular.map((p) => {
+                const inWatchlist = watchlist.some(
+                  (w) => w.tmdbId === p.id && w.type === p.type,
+                );
+                return (
+                  <Link
+                    key={`tr-${p.id}`}
+                    href={`/add/movie/${p.id}`}
+                    className="flex-shrink-0 w-[100px] sm:w-[120px] group relative"
+                  >
+                    <div className="aspect-[2/3] rounded-lg overflow-hidden bg-muted transition-transform group-hover:scale-[1.02] mb-1 relative">
+                      {p.posterPath ? (
+                        <Image
+                          src={p.posterPath}
+                          alt={p.title}
+                          width={120}
+                          height={180}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Film className="w-10 h-10 text-muted-foreground/50" />
+                        </div>
+                      )}
+                      {inWatchlist && (
+                        <span
+                          className="absolute top-1 right-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white dark:bg-blue-400"
+                          title="İzleyeceğim listesinde"
+                        >
+                          <BookmarkCheck className="h-3 w-3" />
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs font-medium truncate">{p.title}</p>
+                    {p.releaseYear && (
+                      <p className="text-[10px] text-muted-foreground">
+                        {p.releaseYear}
+                      </p>
+                    )}
+                  </Link>
+                );
+              })}
+            </ScrollRow>
+          ) : null}
+        </section>
+
+        <div className="flex items-center gap-2 mb-4">
+          <Bookmark className="h-5 w-5 text-amber-500 dark:text-amber-400" />
+          <h2 className="text-lg font-semibold">Tüm listem</h2>
           {sorted.length > 0 && (
             <Button
               variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground gap-1"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground h-8 w-8 ml-auto"
               asChild
             >
               <Link
@@ -247,16 +331,9 @@ export function WatchedList() {
                     ? "/my-list?type=movie"
                     : "/my-list?type=tv"
                 }
+                aria-label="Tümünü gör"
               >
-                Tümünü gör
-                {listType === "movie"
-                  ? sortedMovies.length > 0
-                    ? ` (${sortedMovies.length})`
-                    : ""
-                  : sortedTv.length > 0
-                    ? ` (${sortedTv.length})`
-                    : ""}
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-5 w-5" />
               </Link>
             </Button>
           )}

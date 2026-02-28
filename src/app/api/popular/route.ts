@@ -22,16 +22,21 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type") || "movie";
+  const region = searchParams.get("region") || ""; // TR = Türkiye sinemasında popüler
 
   if (!["movie", "tv"].includes(type)) {
     return NextResponse.json({ error: "Geçersiz tip." }, { status: 400 });
   }
 
   try {
-    const endpoint =
-      type === "tv"
-        ? `${TMDB_BASE}/tv/popular?api_key=${apiKey}&language=tr-TR&include_adult=true`
-        : `${TMDB_BASE}/movie/popular?api_key=${apiKey}&language=tr-TR&include_adult=true`;
+    let endpoint: string;
+    if (region === "TR" && type === "movie") {
+      endpoint = `${TMDB_BASE}/discover/movie?api_key=${apiKey}&language=tr-TR&region=TR&sort_by=popularity.desc&include_adult=true`;
+    } else if (type === "tv") {
+      endpoint = `${TMDB_BASE}/tv/popular?api_key=${apiKey}&language=tr-TR&include_adult=true`;
+    } else {
+      endpoint = `${TMDB_BASE}/movie/popular?api_key=${apiKey}&language=tr-TR&include_adult=true`;
+    }
 
     const res = await fetch(endpoint, {
       next: { revalidate: 86400 }, // 1 gün

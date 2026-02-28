@@ -27,17 +27,40 @@ export async function GET(request: NextRequest) {
         : `${TMDB_BASE}/search/movie?api_key=${apiKey}&language=tr-TR&include_adult=true&query=${encodeURIComponent(q)}`;
 
     const res = await fetch(endpoint, {
-      next: { revalidate: 600 }, // 10 dakika sunucu cache
+      next: { revalidate: 600 },
     });
     const data = await res.json();
 
-    const results = (data.results || []).slice(0, 12).map((item: { id: number; title?: string; name?: string; poster_path: string | null; release_date?: string; first_air_date?: string }) => ({
-      id: item.id,
-      title: item.title || item.name || "",
-      posterPath: item.poster_path ? `${IMAGE_BASE}${item.poster_path}` : null,
-      releaseYear: (item.release_date || item.first_air_date || "").slice(0, 4),
-      type,
-    }));
+    const rawResults = (data.results || []).slice(0, 12);
+    const creditsEndpoint = type === "tv" ? "tv" : "movie";
+
+    const results = await Promise.all(
+      rawResults.map(
+        async (item: { id: number; title?: string; name?: string; poster_path: string | null; release_date?: string; first_air_date?: string }) => {
+          let director: string | null = null;
+          try {
+            const credRes = await fetch(
+              `${TMDB_BASE}/${creditsEndpoint}/${item.id}/credits?api_key=${apiKey}`,
+              { next: { revalidate: 600 } }
+            );
+            const credData = await credRes.json();
+            const crew = credData.crew || [];
+            const directors = crew.filter((c: { job: string }) => c.job === "Director");
+            director = directors.length > 0 ? directors[0].name : null;
+          } catch {
+            // director yoksa boş bırak
+          }
+          return {
+            id: item.id,
+            title: item.title || item.name || "",
+            posterPath: item.poster_path ? `${IMAGE_BASE}${item.poster_path}` : null,
+            releaseYear: (item.release_date || item.first_air_date || "").slice(0, 4),
+            director,
+            type,
+          };
+        }
+      )
+    );
 
     return NextResponse.json({ results });
   } catch (error) {
