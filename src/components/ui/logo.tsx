@@ -23,7 +23,7 @@ export function Logo({
   return (
     <h1
       className={cn(
-        "inline-flex items-baseline justify-center gap-1.5 font-extrabold tracking-tight text-2xl sm:text-3xl whitespace-nowrap shrink-0",
+        "inline-flex items-baseline justify-center gap-0 font-extrabold tracking-tight text-2xl sm:text-3xl whitespace-nowrap shrink-0",
         className,
       )}
       {...props}
@@ -32,7 +32,7 @@ export function Logo({
       <span className={archiveColor}>Archive</span>
       <span
         className={cn(
-          "self-center px-1.5 py-0.5 text-[10px] font-bold",
+          "self-center ml-1 px-1.5 py-0.5 text-[10px] font-bold",
           badgeBg,
           badgeColor
         )}

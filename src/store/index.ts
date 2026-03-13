@@ -14,5 +14,5 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-export { setTheme, setMediaType, hydrateTheme, getStoredTheme } from "./appSlice";
+export { setTheme, setMediaType, hydrateTheme, getStoredTheme, setAllowAdult, hydrateAllowAdult, getStoredAllowAdult } from "./appSlice";
 export type { Theme, MediaType } from "./appSlice";

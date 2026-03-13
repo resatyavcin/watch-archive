@@ -39,10 +39,10 @@ export function ScrollRow({ title, children, className = "" }: ScrollRowProps) {
     <div className={`relative -mx-4 sm:-mx-6 ${className}`}>
       <div
         ref={scrollRef}
-        className="overflow-x-auto px-4 scrollbar-hide sm:px-6"
+        className="overflow-x-auto scrollbar-hide"
       >
-        {title && <div className="mb-2">{title}</div>}
-        <div className="flex items-start gap-4 overflow-x-auto scroll-smooth pt-3 pb-2 scrollbar-hide [&>*]:shrink-0">
+        {title && <div className="mb-2 pl-4 sm:pl-6">{title}</div>}
+        <div className="flex items-start gap-4 overflow-x-auto scroll-smooth pt-3 pb-2 pl-4 scrollbar-hide sm:pl-6 *:shrink-0">
           {children}
         </div>
       </div>
