@@ -1,78 +1,99 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+"use client";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import { useEffect, useState } from "react";
+import { MediaTypeToggle } from "@/components/media-type-toggle";
+import { ScrollRow } from "@/components/scroll-row";
+import { TitleCard } from "@/components/title-card";
+import { TitleCardSkeleton } from "@/components/title-card-skeleton";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const FILMS = [
+  { id: 1, poster: "https://picsum.photos/seed/f1/200/300", title: "Dune: Part Two", year: 2024, rating: 5 },
+  { id: 2, poster: "https://picsum.photos/seed/f2/200/300", title: "Oppenheimer", year: 2023, rating: 4 },
+  { id: 3, poster: "https://picsum.photos/seed/f3/200/300", title: "Poor Things", year: 2023, rating: 3 },
+  { id: 4, poster: "https://picsum.photos/seed/f4/200/300", title: "The Batman", year: 2022 },
+  { id: 5, poster: "https://picsum.photos/seed/f5/200/300", title: "Everything Everywhere", year: 2022, rating: 5 },
+  { id: 6, poster: "https://picsum.photos/seed/f6/200/300", title: "Past Lives", year: 2023, rating: 4 },
+  { id: 7, poster: "https://picsum.photos/seed/f7/200/300", title: "Killers of the Flower Moon", year: 2023 },
+  { id: 8, poster: "https://picsum.photos/seed/f8/200/300", title: "The Holdovers", year: 2023, rating: 2 },
+  { id: 9, poster: "https://picsum.photos/seed/f9/200/300", title: "Barbie", year: 2023, rating: 4 },
+  { id: 10, poster: "https://picsum.photos/seed/f10/200/300", title: "Spider-Man: Across the Spider-Verse", year: 2023, rating: 5 },
+  { id: 11, poster: "https://picsum.photos/seed/f11/200/300", title: "Top Gun: Maverick", year: 2022 },
+  { id: 12, poster: "https://picsum.photos/seed/f12/200/300", title: "The Banshees of Inisherin", year: 2022, rating: 3 },
+  { id: 13, poster: "https://picsum.photos/seed/f13/200/300", title: "Nope", year: 2022 },
+  { id: 14, poster: "https://picsum.photos/seed/f14/200/300", title: "Dune", year: 2021, rating: 4 },
+  { id: 15, poster: "https://picsum.photos/seed/f15/200/300", title: "Nomadland", year: 2020 },
+];
+
+const SERIES = [
+  { id: 101, poster: "https://picsum.photos/seed/s1/200/300", title: "The Last of Us", year: 2023, rating: 5 },
+  { id: 102, poster: "https://picsum.photos/seed/s2/200/300", title: "Succession", year: 2023, rating: 5 },
+  { id: 103, poster: "https://picsum.photos/seed/s3/200/300", title: "The Bear", year: 2023, rating: 4 },
+  { id: 104, poster: "https://picsum.photos/seed/s4/200/300", title: "Squid Game", year: 2021, rating: 5 },
+  { id: 105, poster: "https://picsum.photos/seed/s5/200/300", title: "Severance", year: 2022, rating: 4 },
+  { id: 106, poster: "https://picsum.photos/seed/s6/200/300", title: "White Lotus", year: 2022, rating: 4 },
+  { id: 107, poster: "https://picsum.photos/seed/s7/200/300", title: "House of the Dragon", year: 2022 },
+  { id: 108, poster: "https://picsum.photos/seed/s8/200/300", title: "Wednesday", year: 2022, rating: 3 },
+];
+
+const SKELETON_COUNT = 10;
+
+async function fetchTitles(type: "movie" | "tv") {
+  await new Promise((r) => setTimeout(r, 1200));
+  return type === "movie" ? FILMS : SERIES;
+}
 
 export default function Home() {
+  const [type, setType] = useState<"movie" | "tv">("movie");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoading(true);
+    fetchTitles(type).then(() => {
+      if (!cancelled) setIsLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [type]);
+
+  const handleTypeChange = (newType: "movie" | "tv") => {
+    if (newType === type) return;
+    setType(newType);
+  };
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black`}
-    >
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the index.tsx file.
+    <main className="py-8">
+      <MediaTypeToggle
+        value={type}
+        onChange={handleTypeChange}
+        isLoading={isLoading}
+        className="mb-4"
+      />
+
+      <ScrollRow
+        title={
+          <h1 className="text-base font-bold text-foreground">
+            Popüler this week
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+        }
+      >
+        {isLoading ? (
+          Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+            <TitleCardSkeleton key={i} />
+          ))
+        ) : (
+          (type === "movie" ? FILMS : SERIES).map((item) => (
+            <TitleCard
+              key={item.id}
+              poster={item.poster}
+              title={item.title}
+              year={item.year}
+              type={type}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs/pages/getting-started?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+          ))
+        )}
+      </ScrollRow>
+    </main>
   );
 }
