@@ -4,18 +4,25 @@ const STORAGE_KEY = "watch-archive-theme";
 
 export type Theme = "light" | "dark" | "system";
 
+export type MediaType = "movie" | "tv";
+
 type AppState = {
   theme: Theme;
+  mediaType: MediaType;
 };
 
 const initialState: AppState = {
   theme: "system",
+  mediaType: "movie",
 };
 
 export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
+    setMediaType: (state, action: { payload: MediaType }) => {
+      state.mediaType = action.payload;
+    },
     setTheme: (state, action: { payload: Theme }) => {
       state.theme = action.payload;
       if (typeof window !== "undefined") {
@@ -28,7 +35,7 @@ export const appSlice = createSlice({
   },
 });
 
-export const { setTheme, hydrateTheme } = appSlice.actions;
+export const { setTheme, setMediaType, hydrateTheme } = appSlice.actions;
 
 export function getStoredTheme(): Theme {
   if (typeof window === "undefined") return "system";

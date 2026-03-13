@@ -41,7 +41,23 @@ function TitleCardPoster({
   );
 }
 
-function TitleCardStars({ filledStars }: { filledStars: number }) {
+const starFilled = {
+  movie: "fill-[#e67e22] text-[#e67e22]",
+  tv: "fill-emerald-500 text-emerald-500 dark:fill-emerald-400 dark:text-emerald-400",
+} as const;
+
+const starEmpty = {
+  movie: "fill-transparent text-[#e67e22]/40 dark:text-[#e67e22]/50",
+  tv: "fill-transparent text-emerald-500/40 dark:text-emerald-400/50",
+} as const;
+
+function TitleCardStars({
+  filledStars,
+  type,
+}: {
+  filledStars: number;
+  type: "movie" | "tv";
+}) {
   if (filledStars <= 0) return null;
 
   return (
@@ -49,7 +65,7 @@ function TitleCardStars({ filledStars }: { filledStars: number }) {
       {[1, 2, 3, 4, 5].map((i) => (
         <Star
           key={i}
-          className={`h-2.5 w-2.5 ${i <= filledStars ? "fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400" : "fill-transparent text-muted-foreground/60 dark:text-amber-400/50"}`}
+          className={`h-2.5 w-2.5 ${i <= filledStars ? starFilled[type] : starEmpty[type]}`}
           aria-hidden
         />
       ))}
@@ -74,7 +90,7 @@ export function TitleCard({ poster, title, year, type = "movie", rating }: Title
   return (
     <div className="group relative flex shrink-0 flex-col w-[88px] sm:w-[104px]">
       <TitleCardPoster poster={poster} title={title} type={type} />
-      <TitleCardStars filledStars={filledStars} />
+      <TitleCardStars filledStars={filledStars} type={type} />
       <TitleCardInfo title={title} year={year} />
     </div>
   );
