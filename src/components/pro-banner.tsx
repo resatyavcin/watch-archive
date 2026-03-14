@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Coffee, Crown, Heart, Loader2, X } from "lucide-react";
+import { Check, Coffee, Crown, Heart, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -109,7 +109,8 @@ const diziStyles = {
     banner: "border-emerald-500/30 bg-emerald-500/10",
     icon: "text-emerald-600",
     text: "text-emerald-800",
-    dismiss: "text-emerald-600/70 hover:bg-emerald-500/20 hover:text-emerald-700",
+    dismiss:
+      "text-emerald-600/70 hover:bg-emerald-500/20 hover:text-emerald-700",
     title: "text-emerald-600",
     check: "bg-emerald-500/20 text-emerald-600",
     button: "bg-emerald-500 hover:bg-emerald-600 text-white",
@@ -118,7 +119,8 @@ const diziStyles = {
     banner: "border-emerald-400/30 bg-emerald-400/10",
     icon: "text-emerald-400",
     text: "text-emerald-300",
-    dismiss: "text-emerald-400/70 hover:bg-emerald-400/20 hover:text-emerald-300",
+    dismiss:
+      "text-emerald-400/70 hover:bg-emerald-400/20 hover:text-emerald-300",
     title: "text-emerald-400",
     check: "bg-emerald-400/20 text-emerald-400",
     button: "bg-emerald-600 hover:bg-emerald-500 text-white",
@@ -131,7 +133,6 @@ function getIcon(name: string) {
 }
 
 export function ProBanner() {
-  const [visible, setVisible] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [modalData, setModalData] = useState<ProModalData | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
@@ -159,19 +160,17 @@ export function ProBanner() {
       });
   }, [dialogOpen]);
 
-  const handleDismiss = () => setVisible(false);
-
-  const s = (mediaType === "movie" ? movieStyles : diziStyles)[isDark ? "dark" : "light"];
+  const s = (mediaType === "movie" ? movieStyles : diziStyles)[
+    isDark ? "dark" : "light"
+  ];
 
   const BannerIcon = getIcon(bannerData.bannerIcon);
   const displayModal = modalData ?? DEFAULT_MODAL;
   const HeaderIcon = getIcon(displayModal.headerIcon);
 
-  if (!visible) return null;
-
   return (
     <>
-      <div className="relative mt-2 flex items-center justify-center gap-2 rounded-lg border border-yellow-500/40 bg-yellow-400/15 px-4 py-2.5 text-sm dark:border-yellow-500/50 dark:bg-yellow-500/20">
+      <div className="relative -mx-4 mt-0 flex items-center justify-center gap-2 rounded-none border-x-0 border-y border-yellow-500/40 bg-yellow-400/15 px-4 py-2.5 text-sm sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 dark:border-yellow-500/50 dark:bg-yellow-500/20">
         <BannerIcon className="size-4 shrink-0 text-yellow-600 dark:text-yellow-400" />
         <p className="text-yellow-800 dark:text-yellow-200">
           {bannerData.description}{" "}
@@ -187,14 +186,6 @@ export function ProBanner() {
             Destek ol
           </button>
         </p>
-        <button
-          type="button"
-          onClick={handleDismiss}
-          className="absolute right-2 rounded p-1 text-yellow-600/70 transition-colors hover:bg-yellow-500/25 hover:text-yellow-700 dark:text-yellow-400/70 dark:hover:bg-yellow-400/25 dark:hover:text-yellow-300"
-          aria-label="Kapat"
-        >
-          <X className="size-4" />
-        </button>
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -214,7 +205,9 @@ export function ProBanner() {
           ) : (
             <>
               <DialogHeader>
-                <DialogTitle className={cn("flex items-center gap-2 font-bold", s.title)}>
+                <DialogTitle
+                  className={cn("flex items-center gap-2 font-bold", s.title)}
+                >
                   {displayModal.headerIcon === "Heart" ? (
                     <Heart className="size-5" fill="currentColor" />
                   ) : (
@@ -235,7 +228,7 @@ export function ProBanner() {
                           <span
                             className={cn(
                               "flex size-6 shrink-0 items-center justify-center rounded-full",
-                              s.check
+                              s.check,
                             )}
                           >
                             <FeatureIcon className="size-3.5" />

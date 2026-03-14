@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Film, Moon, Sun, Tv } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Logo } from "@/components/ui/logo";
+import { ProBanner } from "@/components/pro-banner";
 import { setMediaType, setTheme, store } from "@/store";
 import type { RootState } from "@/store";
 
@@ -79,7 +80,7 @@ export function AppHeader() {
   };
 
   return (
-    <header className="flex w-full shrink-0 flex-col gap-1 pt-2 pb-1">
+    <header className="flex w-full shrink-0 flex-col gap-0 pt-2 pb-1">
       <div className="flex h-12 items-center">
         <div className="flex min-w-0 flex-1 items-center justify-start gap-1">
           <button
@@ -121,6 +122,7 @@ export function AppHeader() {
           </button>
         </div>
       </div>
+      <ProBanner />
     </header>
   );
 }

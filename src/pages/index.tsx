@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 import { useGetPopularTitlesQuery } from "@/api/titlesApi";
 import { AdSlot } from "@/components/ad-slot";
-import { ProBanner } from "@/components/pro-banner";
 import { ScrollRow } from "@/components/scroll-row";
 import { TitleCard } from "@/components/title-card";
 import { TitleCardSkeleton } from "@/components/title-card-skeleton";
@@ -22,7 +21,6 @@ export default function Home() {
   return (
     <main className="py-8">
       <div className="space-y-4">
-        <ProBanner />
         {AD_SLOT_INDEX && (
           <AdSlot slot={AD_SLOT_INDEX} className="min-h-[90px] sm:min-h-[120px]" />
         )}

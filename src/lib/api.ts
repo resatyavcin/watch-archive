@@ -16,7 +16,7 @@ export async function fetchFromApp<T>(path: string): Promise<T> {
 
 export async function fetchApi<T>(
   path: string,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<T> {
   const url = apiUrl(path);
   const res = await fetch(url, {
