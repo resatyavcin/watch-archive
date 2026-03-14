@@ -1,5 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { PopularBrowseResponse, Title } from "@/types/title";
+import type {
+  PopularBrowseResponse,
+  Title,
+  TitleDetail,
+} from "@/types/title";
 
 function toTitle(
   item: PopularBrowseResponse["popular"][number],
@@ -36,7 +40,14 @@ export const titlesApi = createApi({
       transformResponse: (response: PopularBrowseResponse, _meta, type) =>
         response.popular.map((item) => toTitle(item, type)),
     }),
+    getTitleByTmdb: builder.query<
+      TitleDetail,
+      { tmdbId: string; type: "MOVIE" | "SERIES" }
+    >({
+      query: ({ tmdbId, type }) =>
+        `/api/titles/by-tmdb/${tmdbId}?type=${type}`,
+    }),
   }),
 });
 
-export const { useGetPopularTitlesQuery } = titlesApi;
+export const { useGetPopularTitlesQuery, useGetTitleByTmdbQuery } = titlesApi;

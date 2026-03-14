@@ -1,10 +1,22 @@
 import { cn } from "@/lib/utils";
 
-export function TitleCardSkeleton({ className }: { className?: string }) {
+const sizeClasses = {
+  default: "w-[96px] sm:w-[112px]",
+  lg: "w-[112px] sm:w-[160px] lg:w-[200px]",
+} as const;
+
+export function TitleCardSkeleton({
+  className,
+  size = "default",
+}: {
+  className?: string;
+  size?: "default" | "lg";
+}) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col w-[96px] sm:w-[112px]",
+        "flex shrink-0 flex-col",
+        sizeClasses[size],
         className,
       )}
     >

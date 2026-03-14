@@ -22,11 +22,6 @@ export function AppNav() {
       ? "text-[#e67e22] [&_svg]:text-[#e67e22]"
       : "text-emerald-600 [&_svg]:text-emerald-600 dark:text-emerald-400 dark:[&_svg]:text-emerald-400";
 
-  const activeBg =
-    mediaType === "movie"
-      ? "bg-background shadow-md shadow-black/5 dark:shadow-black/20"
-      : "bg-background shadow-md shadow-black/5 dark:shadow-black/20";
-
   return (
     <>
       {/* Desktop: Top navbar below header */}
@@ -64,18 +59,18 @@ export function AppNav() {
         </Link>
       </nav>
 
-      {/* Mobile: Segmented control style bottom nav */}
+      {/* Mobile: Bottom nav - edge to edge, no gaps */}
       <nav
-        className="fixed bottom-5 left-4 right-4 z-50 md:hidden"
+        className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-[env(safe-area-inset-bottom)]"
         aria-label="Mobil navigasyon"
       >
-        <div className="flex w-full rounded-full border border-border/60 bg-muted/40 p-1.5 shadow-xl shadow-black/10 backdrop-blur-xl dark:border-white/10 dark:bg-muted/20 dark:shadow-black/30">
+        <div className="flex w-full border-t border-border/60 bg-white p-1.5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-background dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)]">
           <Link
             href="/"
             className={cn(
               "flex flex-1 items-center justify-center gap-2 rounded-full py-2.5 text-xs font-semibold transition-all duration-200",
               isHome
-                ? cn(activeTheme, activeBg)
+                ? activeTheme
                 : "text-muted-foreground hover:text-foreground/80 active:bg-muted/60",
             )}
           >
@@ -87,7 +82,7 @@ export function AppNav() {
             className={cn(
               "flex flex-1 items-center justify-center gap-2 rounded-full py-2.5 text-xs font-semibold transition-all duration-200",
               isSettings
-                ? cn(activeTheme, activeBg)
+                ? activeTheme
                 : "text-muted-foreground hover:text-foreground/80 active:bg-muted/60",
             )}
           >

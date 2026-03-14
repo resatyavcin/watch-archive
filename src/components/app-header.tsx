@@ -8,6 +8,8 @@ import { Logo } from "@/components/ui/logo";
 import { setMediaType, setTheme, store } from "@/store";
 import type { RootState } from "@/store";
 
+const MEDIA_TOGGLE_HINT_SESSION = "watcharchive-media-toggle-hint-session";
+
 function useResolvedDark() {
   const theme = useSelector((state: RootState) => state.app.theme);
   const [resolvedDark, setResolvedDark] = useState(false);
@@ -36,15 +38,41 @@ const ICON_SIZE = "size-10";
 const iconButtonClass =
   "flex shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:text-muted-foreground dark:hover:bg-white/10 dark:hover:text-foreground";
 
-const filmColor = "text-[#e67e22]";
-const filmBg = "bg-[#e67e22]/15";
-const diziColor = "text-emerald-600 dark:text-emerald-400";
-const diziBg = "bg-emerald-500/15 dark:bg-emerald-400/15";
+const mediaToggleBase =
+  "flex shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors";
+
+const filmStyles = "bg-[#e67e22]/15 text-[#e67e22] hover:bg-[#e67e22]/25 dark:hover:bg-[#e67e22]/25";
+const diziStyles = "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-400/15 dark:text-emerald-400 hover:bg-emerald-500/25 hover:text-emerald-600 dark:hover:bg-emerald-400/25 dark:hover:text-emerald-400";
 
 export function AppHeader() {
   const dispatch = useDispatch();
   const resolvedDark = useResolvedDark();
   const mediaType = useSelector((state: RootState) => state.app.mediaType);
+  const [showHint, setShowHint] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const seen = sessionStorage.getItem(MEDIA_TOGGLE_HINT_SESSION);
+    if (seen) return;
+
+    const startId = setTimeout(() => setShowHint(true), 100);
+    const stopId = setTimeout(() => {
+      setShowHint(false);
+      sessionStorage.setItem(MEDIA_TOGGLE_HINT_SESSION, "1");
+    }, 3100);
+
+    return () => {
+      clearTimeout(startId);
+      clearTimeout(stopId);
+    };
+  }, []);
+
+  const handleMediaToggle = () => {
+    const current = store.getState().app.mediaType;
+    dispatch(setMediaType(current === "movie" ? "tv" : "movie"));
+    setShowHint(false);
+    sessionStorage.setItem(MEDIA_TOGGLE_HINT_SESSION, "1");
+  };
 
   const toggleTheme = () => {
     dispatch(setTheme(resolvedDark ? "light" : "dark"));
@@ -56,12 +84,11 @@ export function AppHeader() {
         <div className="flex min-w-0 flex-1 items-center justify-start gap-1">
           <button
             type="button"
-            onClick={() => {
-              const current = store.getState().app.mediaType;
-              dispatch(setMediaType(current === "movie" ? "tv" : "movie"));
-            }}
-            className={`${iconButtonClass} ${ICON_SIZE} ${mediaType === "movie" ? `${filmBg} ${filmColor}` : `${diziBg} ${diziColor}`}`}
-            aria-label={mediaType === "movie" ? "Switch to TV" : "Switch to Movies"}
+            onClick={handleMediaToggle}
+            className={`${mediaToggleBase} ${ICON_SIZE} ${mediaType === "movie" ? filmStyles : diziStyles} ${showHint ? `animate-media-toggle-hint ring-2 ring-offset-2 ring-offset-background dark:ring-offset-background ${mediaType === "movie" ? "ring-[#e67e22]/50" : "ring-emerald-500/50"}` : ""}`}
+            style={showHint ? { "--hint-color": mediaType === "movie" ? "rgba(230, 126, 34, 0.35)" : "rgba(16, 185, 129, 0.35)" } as React.CSSProperties : undefined}
+            aria-label={mediaType === "movie" ? "Dizilere geç (tıkla)" : "Filmlere geç (tıkla)"}
+            title={mediaType === "movie" ? "Dizilere geç" : "Filmlere geç"}
           >
             {mediaType === "movie" ? (
               <Film className="size-5 text-[#e67e22]" />

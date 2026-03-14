@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Film, Tv, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export type TitleCardProps = {
   poster: string | null;
@@ -7,17 +8,24 @@ export type TitleCardProps = {
   year: number;
   type?: "movie" | "tv";
   rating?: number;
+  size?: "default" | "lg";
 };
 
 function TitleCardPoster({
   poster,
   title,
   type,
+  size,
 }: {
   poster: string | null;
   title: string;
   type: "movie" | "tv";
+  size: "default" | "lg";
 }) {
+  const sizesAttr =
+    size === "lg"
+      ? "(max-width: 640px) 112px, (max-width: 1024px) 160px, 200px"
+      : "(max-width: 768px) 96px, 112px";
   return (
     <div className="relative mb-1 aspect-2/3 overflow-hidden rounded-md border border-neutral-300 dark:border-neutral-600 bg-muted transition-transform group-hover:scale-[1.02]">
       {poster ? (
@@ -25,7 +33,7 @@ function TitleCardPoster({
           src={poster}
           alt={title}
           fill
-          sizes="(max-width: 768px) 96px, 112px"
+          sizes={sizesAttr}
           className="object-cover"
         />
       ) : (
@@ -73,25 +81,63 @@ function TitleCardStars({
   );
 }
 
-function TitleCardInfo({ title, year }: { title: string; year: number }) {
+function TitleCardInfo({
+  title,
+  year,
+  size,
+}: {
+  title: string;
+  year: number;
+  size: "default" | "lg";
+}) {
   return (
     <>
-      <p className="line-clamp-2 text-xs font-medium leading-tight">{title}</p>
+      <p
+        className={cn(
+          "line-clamp-2 font-medium leading-tight",
+          size === "lg"
+            ? "text-xs min-[640px]:text-sm min-[1024px]:text-base"
+            : "text-xs"
+        )}
+      >
+        {title}
+      </p>
       {year && (
-        <p className="text-[10px] text-muted-foreground">{year}</p>
+        <p
+          className={cn(
+            "text-muted-foreground",
+            size === "lg"
+              ? "text-[10px] min-[640px]:text-xs min-[1024px]:text-sm"
+              : "text-[10px]"
+          )}
+        >
+          {year}
+        </p>
       )}
     </>
   );
 }
 
-export function TitleCard({ poster, title, year, type = "movie", rating }: TitleCardProps) {
+const sizeClasses = {
+  default: "w-[96px] sm:w-[112px]",
+  lg: "w-[112px] sm:w-[160px] lg:w-[200px]",
+} as const;
+
+export function TitleCard({
+  poster,
+  title,
+  year,
+  type = "movie",
+  rating,
+  size = "default",
+}: TitleCardProps) {
   const filledStars = rating ? Math.min(5, Math.max(0, Math.round(rating))) : 0;
 
   return (
-    <div className="group relative flex shrink-0 flex-col w-[96px] sm:w-[112px]">
-      <TitleCardPoster poster={poster} title={title} type={type} />
+    <div className={cn("group relative flex shrink-0 flex-col", sizeClasses[size])}>
+      <TitleCardPoster poster={poster} title={title} type={type} size={size} />
       <TitleCardStars filledStars={filledStars} type={type} />
-      <TitleCardInfo title={title} year={year} />
+      <TitleCardInfo title={title} year={year} size={size} />
     </div>
   );
 }

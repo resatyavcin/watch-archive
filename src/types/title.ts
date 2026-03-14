@@ -23,3 +23,20 @@ export type PopularBrowseItem = {
 export type PopularBrowseResponse = {
   popular: PopularBrowseItem[];
 };
+
+export type TitleDetail = {
+  id: number;
+  tmdbId: number;
+  contentType: "MOVIE" | "SERIES";
+  name: string;
+  overview: string;
+  posterUrl: string | null;
+  backdropUrl: string | null;
+  releaseDate: string;
+  voteAverage: number;
+  voteCount: number;
+  runtime: number | null;
+  numberOfSeasons: number | null;
+  numberOfEpisodes: number | null;
+  genres: string[];
+};

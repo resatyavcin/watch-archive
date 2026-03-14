@@ -129,6 +129,33 @@ body {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@keyframes media-toggle-hint {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--hint-color);
+  }
+  14% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 6px var(--hint-color);
+  }
+  28% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--hint-color);
+  }
+  42% {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 8px var(--hint-color);
+  }
+  56% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--hint-color);
+  }
+}
+
+.animate-media-toggle-hint {
+  animation: media-toggle-hint 1.8s ease-in-out infinite;
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
