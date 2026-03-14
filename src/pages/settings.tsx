@@ -26,7 +26,12 @@ export default function Settings() {
   return (
     <main className="py-8">
       <div className="mb-6 flex items-center gap-2">
-        <Button variant="ghost" size="icon-sm" asChild aria-label="Ana sayfaya dön">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          asChild
+          aria-label="Ana sayfaya dön"
+        >
           <Link href="/">
             <ArrowLeft className="size-4" />
           </Link>

@@ -4,7 +4,7 @@ export function TitleCardSkeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col w-[88px] sm:w-[104px]",
+        "flex shrink-0 flex-col w-[96px] sm:w-[112px]",
         className,
       )}
     >

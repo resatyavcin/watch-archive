@@ -33,7 +33,6 @@ export default function Home() {
                 title={item.title}
                 year={item.year}
                 type={type}
-                rating={item.rating}
               />
             ))}
       </ScrollRow>

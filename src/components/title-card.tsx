@@ -19,13 +19,13 @@ function TitleCardPoster({
   type: "movie" | "tv";
 }) {
   return (
-    <div className="relative mb-1 aspect-2/3 overflow-hidden rounded-md bg-muted transition-transform group-hover:scale-[1.02]">
+    <div className="relative mb-1 aspect-2/3 overflow-hidden rounded-md border border-neutral-300 dark:border-neutral-600 bg-muted transition-transform group-hover:scale-[1.02]">
       {poster ? (
         <Image
           src={poster}
           alt={title}
           fill
-          sizes="(max-width: 768px) 88px, 104px"
+          sizes="(max-width: 768px) 96px, 112px"
           className="object-cover"
         />
       ) : (
@@ -88,7 +88,7 @@ export function TitleCard({ poster, title, year, type = "movie", rating }: Title
   const filledStars = rating ? Math.min(5, Math.max(0, Math.round(rating))) : 0;
 
   return (
-    <div className="group relative flex shrink-0 flex-col w-[88px] sm:w-[104px]">
+    <div className="group relative flex shrink-0 flex-col w-[96px] sm:w-[112px]">
       <TitleCardPoster poster={poster} title={title} type={type} />
       <TitleCardStars filledStars={filledStars} type={type} />
       <TitleCardInfo title={title} year={year} />

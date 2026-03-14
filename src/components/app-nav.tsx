@@ -24,8 +24,8 @@ export function AppNav() {
 
   const activeBg =
     mediaType === "movie"
-      ? "bg-[#e67e22]/15"
-      : "bg-emerald-500/15 dark:bg-emerald-400/15";
+      ? "bg-background shadow-md shadow-black/5 dark:shadow-black/20"
+      : "bg-background shadow-md shadow-black/5 dark:shadow-black/20";
 
   return (
     <>
@@ -38,7 +38,9 @@ export function AppNav() {
           href="/"
           className={cn(
             navLinkDesktopClass,
-            isHome ? activeTheme : "text-muted-foreground hover:text-foreground"
+            isHome
+              ? activeTheme
+              : "text-muted-foreground hover:text-foreground",
           )}
         >
           <Home className="size-4 shrink-0" />
@@ -48,7 +50,9 @@ export function AppNav() {
           href="/settings"
           className={cn(
             navLinkDesktopClass,
-            isSettings ? activeTheme : "text-muted-foreground hover:text-foreground"
+            isSettings
+              ? activeTheme
+              : "text-muted-foreground hover:text-foreground",
           )}
         >
           <Avatar size="sm" className="size-5 shrink-0">
@@ -60,35 +64,37 @@ export function AppNav() {
         </Link>
       </nav>
 
-      {/* Mobile: Bottom nav */}
+      {/* Mobile: Segmented control style bottom nav */}
       <nav
-        className="fixed bottom-4 left-4 right-4 z-50 flex md:hidden items-center justify-center gap-1 rounded-xl border border-border/80 bg-background/80 px-3 py-2 shadow-lg shadow-black/5 backdrop-blur-xl dark:border-white/10 dark:shadow-black/20"
+        className="fixed bottom-5 left-4 right-4 z-50 md:hidden"
         aria-label="Mobil navigasyon"
       >
-        <Link
-          href="/"
-          className={cn(
-            "flex flex-1 flex-col items-center justify-center gap-1 rounded-lg px-4 py-2 text-[11px] font-medium transition-all duration-200",
-            isHome
-              ? cn(activeTheme, activeBg)
-              : "text-muted-foreground active:bg-muted/50"
-          )}
-        >
-          <Home className="size-4 shrink-0" strokeWidth={2} />
-          <span>Ana Sayfa</span>
-        </Link>
-        <Link
-          href="/settings"
-          className={cn(
-            "flex flex-1 flex-col items-center justify-center gap-1 rounded-lg px-4 py-2 text-[11px] font-medium transition-all duration-200",
-            isSettings
-              ? cn(activeTheme, activeBg)
-              : "text-muted-foreground active:bg-muted/50"
-          )}
-        >
-          <Settings className="size-4 shrink-0" strokeWidth={2} />
-          <span>Ayarlar</span>
-        </Link>
+        <div className="flex w-full rounded-full border border-border/60 bg-muted/40 p-1.5 shadow-xl shadow-black/10 backdrop-blur-xl dark:border-white/10 dark:bg-muted/20 dark:shadow-black/30">
+          <Link
+            href="/"
+            className={cn(
+              "flex flex-1 items-center justify-center gap-2 rounded-full py-2.5 text-xs font-semibold transition-all duration-200",
+              isHome
+                ? cn(activeTheme, activeBg)
+                : "text-muted-foreground hover:text-foreground/80 active:bg-muted/60",
+            )}
+          >
+            <Home className="size-4 shrink-0" strokeWidth={2.5} />
+            <span>Ana Sayfa</span>
+          </Link>
+          <Link
+            href="/settings"
+            className={cn(
+              "flex flex-1 items-center justify-center gap-2 rounded-full py-2.5 text-xs font-semibold transition-all duration-200",
+              isSettings
+                ? cn(activeTheme, activeBg)
+                : "text-muted-foreground hover:text-foreground/80 active:bg-muted/60",
+            )}
+          >
+            <Settings className="size-4 shrink-0" strokeWidth={2.5} />
+            <span>Ayarlar</span>
+          </Link>
+        </div>
       </nav>
     </>
   );
