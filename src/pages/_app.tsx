@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { useEffect } from "react";
 import { AppHeader } from "@/components/app-header";
 import { AppNav } from "@/components/app-nav";
+import { GoogleAdSense } from "@/components/google-adsense";
 import { ThemeProvider } from "@/components/theme-provider";
 import { StoreProvider } from "@/store/StoreProvider";
 
@@ -31,6 +32,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
 
   return (
     <div className={`${geistSans.className} ${geistMono.variable}`}>
+      <GoogleAdSense />
       <StoreProvider>
         <ThemeProvider>
         <div className="min-h-screen bg-background">

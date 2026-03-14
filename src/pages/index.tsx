@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { useGetPopularTitlesQuery } from "@/api/titlesApi";
+import { AdSlot } from "@/components/ad-slot";
 import { ProBanner } from "@/components/pro-banner";
 import { ScrollRow } from "@/components/scroll-row";
 import { TitleCard } from "@/components/title-card";
 import { TitleCardSkeleton } from "@/components/title-card-skeleton";
 import type { RootState } from "@/store";
+
+const AD_SLOT_INDEX = process.env.NEXT_PUBLIC_ADSENSE_SLOT_INDEX ?? "";
 
 const SKELETON_COUNT = 10;
 
@@ -20,6 +23,9 @@ export default function Home() {
     <main className="py-8">
       <div className="space-y-4">
         <ProBanner />
+        {AD_SLOT_INDEX && (
+          <AdSlot slot={AD_SLOT_INDEX} className="min-h-[90px] sm:min-h-[120px]" />
+        )}
         <ScrollRow
         title={
           <h1 className="text-base font-bold text-foreground">

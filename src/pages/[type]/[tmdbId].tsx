@@ -6,8 +6,11 @@ import { useRouter } from "next/router";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Film, Tv, Star, ArrowLeft } from "lucide-react";
 import { useGetTitleByTmdbQuery } from "@/api/titlesApi";
+import { AdSlot } from "@/components/ad-slot";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+const AD_SLOT_DETAIL = process.env.NEXT_PUBLIC_ADSENSE_SLOT_DETAIL ?? "";
 
 const iconButtonClass =
   "flex shrink-0 cursor-pointer items-center justify-center rounded-full bg-white/90 text-muted-foreground transition-colors hover:bg-white hover:text-foreground dark:bg-white/20 dark:text-foreground dark:hover:bg-white/30 dark:hover:text-foreground size-10";
@@ -335,6 +338,10 @@ export default function TitleDetailPage() {
       {/* Overview - full width, line-clamp with expand */}
       {data.overview && (
         <OverviewSection text={data.overview} />
+      )}
+
+      {AD_SLOT_DETAIL && (
+        <AdSlot slot={AD_SLOT_DETAIL} className="mt-8 min-h-[90px] sm:min-h-[120px]" />
       )}
     </main>
   );
