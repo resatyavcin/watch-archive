@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { cn } from "@/lib/utils";
 
-const CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+const CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID ?? "ca-pub-8699441082010152";
 
 declare global {
   interface Window {
@@ -56,7 +56,7 @@ export function AdSlot({
     pushAds();
   }, [router.asPath]);
 
-  if (!CLIENT_ID || process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production") {
     return (
       <div
         className={cn("flex min-h-[100px] items-center justify-center rounded-lg border border-dashed border-muted-foreground/20 bg-muted/30 text-muted-foreground", className)}
