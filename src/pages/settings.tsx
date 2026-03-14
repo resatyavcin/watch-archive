@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, Shield } from "lucide-react";
+import { LogOut, Shield } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { setAllowAdult } from "@/store";
 import type { RootState } from "@/store";
@@ -24,25 +23,19 @@ export default function Settings() {
   const iconClass = mediaType === "movie" ? iconMovie : iconTv;
 
   return (
-    <main className="py-8">
-      <div className="mb-6 flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          asChild
-          aria-label="Ana sayfaya dön"
-        >
-          <Link href="/">
-            <ArrowLeft className="size-4" />
-          </Link>
-        </Button>
-        <h1 className="text-2xl font-bold">Ayarlar</h1>
-      </div>
+    <main className="pt-8 pb-16">
+      {/* Profile - dummy for now */}
+      <section className="mb-10 flex flex-col items-center py-8">
+        <Avatar className="size-20 shrink-0">
+          <AvatarFallback className="text-xl font-medium">KA</AvatarFallback>
+        </Avatar>
+      </section>
+
       <section className="mt-6">
         <h2 className="mb-3 text-sm font-medium text-muted-foreground">
           Tercihler
         </h2>
-        <ul className="divide-y divide-border rounded-lg border border-border bg-card">
+        <ul className="divide-y divide-border rounded-xl overflow-hidden bg-muted/30">
           <li className="flex items-center justify-between gap-4 px-4 py-3">
             <div className="flex items-center gap-3">
               <div
@@ -65,6 +58,38 @@ export default function Settings() {
           </li>
         </ul>
       </section>
+
+      <ul className="mt-6 rounded-xl overflow-hidden bg-muted/30">
+        <li>
+          <button
+            type="button"
+            className="group flex w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-200 hover:bg-muted/50"
+          >
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted transition-colors duration-200 group-hover:bg-destructive/10">
+              <LogOut className="size-5 text-muted-foreground transition-colors duration-200 group-hover:text-destructive/80" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-muted-foreground transition-colors duration-200 group-hover:text-destructive/80">
+                Çıkış yap
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Hesabınızdan çıkış yapın
+              </p>
+            </div>
+          </button>
+        </li>
+      </ul>
     </main>
   );
+}
+
+export async function getStaticProps() {
+  return {
+    props: {
+      scrollHeader: {
+        title: "Kullanıcı Adı",
+        backHref: "/",
+      },
+    },
+  };
 }

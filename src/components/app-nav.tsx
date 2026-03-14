@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Settings } from "lucide-react";
+import { Home, User } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -26,7 +26,7 @@ export function AppNav() {
     <>
       {/* Desktop: Top navbar below header */}
       <nav
-        className="hidden md:flex items-center justify-start gap-1 border-b border-border bg-background/95 py-2 pl-2"
+        className="hidden md:flex items-center justify-end gap-1 border-b border-border bg-background/95 py-2 pr-2"
         aria-label="Ana navigasyon"
       >
         <Link
@@ -50,12 +50,12 @@ export function AppNav() {
               : "text-muted-foreground hover:text-foreground",
           )}
         >
-          <Avatar size="sm" className="size-5 shrink-0">
+          <Avatar size="sm" className="shrink-0">
             <AvatarFallback>
-              <Settings className="size-2.5" />
+              <User className="size-3.5" />
             </AvatarFallback>
           </Avatar>
-          Ayarlar
+          Profilim
         </Link>
       </nav>
 
@@ -64,30 +64,34 @@ export function AppNav() {
         className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-[env(safe-area-inset-bottom)]"
         aria-label="Mobil navigasyon"
       >
-        <div className="flex w-full border-t border-border/60 bg-white p-1.5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-background dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)]">
+        <div className="flex w-full border-t border-border/60 bg-white px-2 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-background dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)]">
           <Link
             href="/"
             className={cn(
-              "flex flex-1 items-center justify-center gap-2 rounded-full py-2.5 text-xs font-semibold transition-all duration-200",
+              "flex flex-1 items-center justify-center rounded-full py-3 text-xs font-semibold transition-all duration-200",
               isHome
                 ? activeTheme
                 : "text-muted-foreground hover:text-foreground/80 active:bg-muted/60",
             )}
+            aria-label="Ana Sayfa"
           >
-            <Home className="size-4 shrink-0" strokeWidth={2.5} />
-            <span>Ana Sayfa</span>
+            <Home className="size-6 shrink-0" strokeWidth={2.5} />
           </Link>
           <Link
             href="/settings"
             className={cn(
-              "flex flex-1 items-center justify-center gap-2 rounded-full py-2.5 text-xs font-semibold transition-all duration-200",
+              "flex flex-1 items-center justify-center rounded-full py-3 text-xs font-semibold transition-all duration-200",
               isSettings
                 ? activeTheme
                 : "text-muted-foreground hover:text-foreground/80 active:bg-muted/60",
             )}
+            aria-label="Profilim"
           >
-            <Settings className="size-4 shrink-0" strokeWidth={2.5} />
-            <span>Ayarlar</span>
+            <Avatar size="lg" className="shrink-0">
+              <AvatarFallback>
+                <User className="size-5" />
+              </AvatarFallback>
+            </Avatar>
           </Link>
         </div>
       </nav>

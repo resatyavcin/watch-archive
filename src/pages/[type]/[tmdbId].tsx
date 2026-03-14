@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import type { GetServerSideProps } from "next";
+import { fetchTitleByTmdb } from "@/lib/titles";
 import { useRouter } from "next/router";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Film, Tv, Star, ArrowLeft } from "lucide-react";
 import { useGetTitleByTmdbQuery } from "@/api/titlesApi";
 import { AdSlot } from "@/components/ad-slot";
@@ -11,9 +13,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const AD_SLOT_DETAIL = process.env.NEXT_PUBLIC_ADSENSE_SLOT_DETAIL ?? "";
-
-const iconButtonClass =
-  "flex shrink-0 cursor-pointer items-center justify-center rounded-full bg-white/90 text-muted-foreground transition-colors hover:bg-white hover:text-foreground dark:bg-white/20 dark:text-foreground dark:hover:bg-white/30 dark:hover:text-foreground size-10";
 
 /** TMDB backdrop için daha yüksek çözünürlük (w300/w500/w780 → w1280) */
 function upgradeBackdropUrl(url: string): string {
@@ -143,18 +142,6 @@ export default function TitleDetailPage() {
     { skip: !pageTmdbId || !isValidType }
   );
 
-  const [scrollOpacity, setScrollOpacity] = useState(0);
-  useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      const opacity = Math.min(1, Math.max(0, (y - 60) / 80));
-      setScrollOpacity(opacity);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   if (!router.isReady) {
     return (
       <main className="py-8">
@@ -215,27 +202,6 @@ export default function TitleDetailPage() {
 
   return (
     <main className="pt-8 pb-16">
-      {/* Back button: always visible, no scroll needed */}
-      <Link
-        href="/"
-        className={`fixed left-4 top-2 z-50 ${iconButtonClass}`}
-        aria-label="Ana Sayfaya Dön"
-      >
-        <ArrowLeft className="size-5" />
-      </Link>
-
-      {/* Header with title: only appears on scroll */}
-      <header
-        className="fixed left-0 right-0 top-0 z-40 flex h-14 items-center justify-center px-4 transition-opacity duration-200 md:h-12"
-        style={{ opacity: scrollOpacity }}
-        aria-hidden={scrollOpacity < 0.5}
-      >
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-md" />
-        <h1 className="relative z-10 max-w-[70%] truncate text-center text-base font-semibold text-foreground sm:text-lg">
-          {data.name}
-        </h1>
-      </header>
-
       {/* Hero with backdrop */}
       <div className="-mx-4 -mt-8 relative h-48 overflow-hidden sm:-mx-6 sm:-mt-8 md:-mx-8 md:-mt-8 lg:h-64">
         {data.backdropUrl ? (
@@ -346,3 +312,26 @@ export default function TitleDetailPage() {
     </main>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { type, tmdbId } = context.params ?? {};
+  const pageType = typeof type === "string" ? type : "";
+  const pageTmdbId = typeof tmdbId === "string" ? tmdbId : "";
+  const isValidType = pageType === "movie" || pageType === "series";
+  const apiType = pageType === "movie" ? "MOVIE" : "SERIES";
+
+  if (!isValidType || !pageTmdbId) return { props: {} };
+
+  const data = await fetchTitleByTmdb({ tmdbId: pageTmdbId, type: apiType });
+  if (!data) return { props: {} };
+
+  return {
+    props: {
+      scrollHeader: {
+        title: data.name,
+        backHref: "/",
+        backAlwaysVisible: true,
+      },
+    },
+  };
+};

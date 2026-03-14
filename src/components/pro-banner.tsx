@@ -170,7 +170,7 @@ export function ProBanner() {
 
   return (
     <>
-      <div className="relative -mx-4 mt-0 flex items-center justify-center gap-2 rounded-none border-x-0 border-y border-yellow-500/40 bg-yellow-400/15 px-4 py-2.5 text-sm sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 dark:border-yellow-500/50 dark:bg-yellow-500/20">
+      <div className="relative -mx-4 mt-2 flex items-center justify-center gap-2 rounded-none border-x-0 border-y border-yellow-500/40 bg-yellow-400/15 px-4 py-2.5 text-sm sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 dark:border-yellow-500/50 dark:bg-yellow-500/20">
         <BannerIcon className="size-4 shrink-0 text-yellow-600 dark:text-yellow-400" />
         <p className="text-yellow-800 dark:text-yellow-200">
           {bannerData.description}{" "}

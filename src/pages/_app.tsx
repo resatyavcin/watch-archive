@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { useEffect } from "react";
 import { AppHeader } from "@/components/app-header";
 import { AppNav } from "@/components/app-nav";
+import { ScrollHeader } from "@/components/scroll-header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { StoreProvider } from "@/store/StoreProvider";
 
@@ -37,6 +38,13 @@ export default function App({ Component, pageProps, router }: AppProps) {
           <div className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 md:pb-8 lg:px-8">
             {!isDetailPage && <AppHeader />}
             {!isDetailPage && <AppNav />}
+            {pageProps.scrollHeader && (
+              <ScrollHeader
+                title={pageProps.scrollHeader.title}
+                backHref={pageProps.scrollHeader.backHref}
+                backAlwaysVisible={pageProps.scrollHeader.backAlwaysVisible}
+              />
+            )}
             <Component {...pageProps} />
           </div>
         </div>
