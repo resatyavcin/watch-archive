@@ -24,6 +24,21 @@ export type PopularBrowseResponse = {
   popular: PopularBrowseItem[];
 };
 
+export type SearchResultItem = {
+  tmdbId: number;
+  title: string;
+  contentType: "MOVIE" | "SERIES";
+  posterPath?: string | null;
+  posterUrl?: string | null;
+  releaseDate?: string;
+  voteAverage?: number;
+};
+
+export type SearchResponse = {
+  results?: SearchResultItem[];
+  items?: SearchResultItem[];
+};
+
 export type TitleDetail = {
   id: number;
   tmdbId: number;

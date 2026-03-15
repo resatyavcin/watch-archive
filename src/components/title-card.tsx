@@ -8,7 +8,7 @@ export type TitleCardProps = {
   year: number;
   type?: "movie" | "tv";
   rating?: number;
-  size?: "default" | "lg";
+  size?: "default" | "lg" | "grid";
 };
 
 function TitleCardPoster({
@@ -121,6 +121,7 @@ function TitleCardInfo({
 const sizeClasses = {
   default: "w-[96px] sm:w-[112px]",
   lg: "w-[112px] sm:w-[160px] lg:w-[200px]",
+  grid: "w-full min-w-0",
 } as const;
 
 export function TitleCard({
@@ -132,12 +133,12 @@ export function TitleCard({
   size = "default",
 }: TitleCardProps) {
   const filledStars = rating ? Math.min(5, Math.max(0, Math.round(rating))) : 0;
-
+  const innerSize = size === "grid" ? "lg" : size;
   return (
     <div className={cn("group relative flex shrink-0 flex-col", sizeClasses[size])}>
-      <TitleCardPoster poster={poster} title={title} type={type} size={size} />
+      <TitleCardPoster poster={poster} title={title} type={type} size={innerSize} />
       <TitleCardStars filledStars={filledStars} type={type} />
-      <TitleCardInfo title={title} year={year} size={size} />
+      <TitleCardInfo title={title} year={year} size={innerSize} />
     </div>
   );
 }

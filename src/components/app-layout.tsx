@@ -14,6 +14,8 @@ type AppLayoutProps = {
     title: string;
     backHref: string;
     backAlwaysVisible?: boolean;
+    hideBackButton?: boolean;
+    useRouterBack?: boolean;
   };
 };
 
@@ -37,7 +39,7 @@ export function AppLayout({ children, scrollHeader }: AppLayoutProps) {
       className={
         showAuthLayout
           ? "relative flex min-h-screen w-full flex-col"
-          : "mx-auto max-w-7xl px-4 pb-20 sm:px-6 md:pb-8 lg:px-8"
+          : "mx-auto max-w-7xl px-4 pb-20 sm:px-6 md:pb-8 lg:px-0"
       }
     >
       {showAuthLayout ? (
@@ -49,7 +51,7 @@ export function AppLayout({ children, scrollHeader }: AppLayoutProps) {
         <>
           {!isDetailPage && (
             <>
-              <AppHeader />
+              <AppHeader leftPadding={!!scrollHeader?.backAlwaysVisible && !scrollHeader?.hideBackButton} />
               <AppNav />
             </>
           )}
@@ -58,6 +60,8 @@ export function AppLayout({ children, scrollHeader }: AppLayoutProps) {
               title={scrollTitle}
               backHref={scrollHeader.backHref}
               backAlwaysVisible={scrollHeader.backAlwaysVisible}
+              hideBackButton={scrollHeader.hideBackButton}
+              useRouterBack={scrollHeader.useRouterBack}
             />
           )}
           {children}

@@ -11,9 +11,7 @@ function LoadingSkeleton({ mediaType }: { mediaType: "movie" | "tv" }) {
   const title = mediaType === "movie" ? "Popüler Filmler" : "Popüler Diziler";
   return (
     <main className="pt-4 pb-16">
-      <ScrollRow
-        title={<h2 className="text-lg font-semibold">{title}</h2>}
-      >
+      <ScrollRow title={<h2 className="text-lg font-semibold">{title}</h2>}>
         {Array.from({ length: 8 }).map((_, i) => (
           <TitleCardSkeleton key={i} size="lg" />
         ))}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 
@@ -12,13 +13,20 @@ export interface ScrollHeaderProps {
   backHref?: string;
   /** When true, back button is always visible (e.g. detail page) */
   backAlwaysVisible?: boolean;
+  /** When true, back button is rendered inline in page (e.g. search) */
+  hideBackButton?: boolean;
+  /** When true, use router.back() instead of backHref (e.g. detail page - returns to search or home) */
+  useRouterBack?: boolean;
 }
 
 export function ScrollHeader({
   title,
   backHref = "/",
   backAlwaysVisible = false,
+  hideBackButton = false,
+  useRouterBack = false,
 }: ScrollHeaderProps) {
+  const router = useRouter();
   const [scrollOpacity, setScrollOpacity] = useState(0);
 
   useEffect(() => {
@@ -41,20 +49,44 @@ export function ScrollHeader({
   const visible = scrollOpacity >= 0.5;
   const backVisible = backAlwaysVisible || visible;
 
+  const handleBack = () => {
+    if (useRouterBack && typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else if (useRouterBack) {
+      router.push(backHref);
+    }
+  };
+
   return (
     <>
-      {/* Back button - appears on scroll, or always when backAlwaysVisible */}
-      <Link
-        href={backHref}
-        className={backButtonClass}
-        aria-label="Ana sayfaya dön"
-        style={{
-          opacity: backAlwaysVisible ? 1 : scrollOpacity,
-          pointerEvents: backVisible ? "auto" : "none",
-        }}
-      >
-        <ArrowLeft className="size-5" />
-      </Link>
+      {/* Back button - appears on scroll, or always when backAlwaysVisible (hidden when hideBackButton) */}
+      {!hideBackButton &&
+        (useRouterBack ? (
+          <button
+            type="button"
+            onClick={handleBack}
+            className={backButtonClass}
+            aria-label="Geri dön"
+            style={{
+              opacity: backAlwaysVisible ? 1 : scrollOpacity,
+              pointerEvents: backVisible ? "auto" : "none",
+            }}
+          >
+            <ArrowLeft className="size-5" />
+          </button>
+        ) : (
+          <Link
+            href={backHref}
+            className={backButtonClass}
+            aria-label="Ana sayfaya dön"
+            style={{
+              opacity: backAlwaysVisible ? 1 : scrollOpacity,
+              pointerEvents: backVisible ? "auto" : "none",
+            }}
+          >
+            <ArrowLeft className="size-5" />
+          </Link>
+        ))}
 
       {/* Header bar - appears on scroll */}
       <header

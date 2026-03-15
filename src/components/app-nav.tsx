@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, User } from "lucide-react";
+import { Home, Search, User } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -24,12 +24,18 @@ export function AppNav() {
   const mediaType = useSelector((state: RootState) => state.app.mediaType);
   const user = useSelector((state: RootState) => state.app.auth.user);
   const isHome = pathname === "/";
+  const isSearch = pathname === "/search";
   const isSettings = pathname === "/settings";
 
   const activeTheme =
     mediaType === "movie"
       ? "text-[#e67e22] [&_svg]:text-[#e67e22]"
       : "text-emerald-600 [&_svg]:text-emerald-600 dark:text-emerald-400 dark:[&_svg]:text-emerald-400";
+
+  const avatarRingColor =
+    mediaType === "movie"
+      ? "rgba(230, 126, 34, 0.7)"
+      : "rgba(16, 185, 129, 0.7)";
 
   return (
     <>
@@ -51,6 +57,18 @@ export function AppNav() {
           Ana Sayfa
         </Link>
         <Link
+          href="/search"
+          className={cn(
+            navLinkDesktopClass,
+            isSearch
+              ? activeTheme
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <Search className="size-4 shrink-0" />
+          Ara
+        </Link>
+        <Link
           href="/settings"
           className={cn(
             navLinkDesktopClass,
@@ -59,7 +77,8 @@ export function AppNav() {
               : "text-muted-foreground hover:text-foreground",
           )}
         >
-          <Avatar size="sm" className="shrink-0">
+          <span className="inline-flex rounded-full p-0.5" style={{ boxShadow: `0 0 0 2px ${avatarRingColor}` }}>
+            <Avatar size="sm" className="shrink-0">
             {user?.avatarUrl && (
               <AvatarImage src={user.avatarUrl} alt={user.displayName} />
             )}
@@ -71,6 +90,7 @@ export function AppNav() {
               )}
             </AvatarFallback>
           </Avatar>
+          </span>
           {user?.displayName ?? "Profilim"}
         </Link>
       </nav>
@@ -94,6 +114,18 @@ export function AppNav() {
             <Home className="size-6 shrink-0" strokeWidth={2.5} />
           </Link>
           <Link
+            href="/search"
+            className={cn(
+              "flex flex-1 items-center justify-center rounded-full py-3 text-xs font-semibold transition-all duration-200",
+              isSearch
+                ? activeTheme
+                : "text-muted-foreground hover:text-foreground/80 active:bg-muted/60",
+            )}
+            aria-label="Ara"
+          >
+            <Search className="size-6 shrink-0" strokeWidth={2.5} />
+          </Link>
+          <Link
             href="/settings"
             className={cn(
               "flex flex-1 items-center justify-center rounded-full py-3 text-xs font-semibold transition-all duration-200",
@@ -103,6 +135,7 @@ export function AppNav() {
             )}
             aria-label={user?.displayName ?? "Profilim"}
           >
+            <span className="inline-flex rounded-full p-0.5" style={{ boxShadow: `0 0 0 2px ${avatarRingColor}` }}>
             <Avatar size="lg" className="shrink-0">
               {user?.avatarUrl && (
                 <AvatarImage src={user.avatarUrl} alt={user.displayName} />
@@ -115,6 +148,7 @@ export function AppNav() {
                 )}
               </AvatarFallback>
             </Avatar>
+            </span>
           </Link>
         </div>
       </nav>

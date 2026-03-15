@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 const sizeClasses = {
   default: "w-[96px] sm:w-[112px]",
   lg: "w-[112px] sm:w-[160px] lg:w-[200px]",
+  grid: "w-full min-w-0",
 } as const;
 
 export function TitleCardSkeleton({
@@ -10,7 +11,7 @@ export function TitleCardSkeleton({
   size = "default",
 }: {
   className?: string;
-  size?: "default" | "lg";
+  size?: "default" | "lg" | "grid";
 }) {
   return (
     <div

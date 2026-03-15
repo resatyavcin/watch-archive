@@ -54,7 +54,6 @@ export function BrowseHome() {
               title={t.title}
               year={t.year}
               type={t.type}
-              rating={t.rating}
               size="lg"
             />
           </Link>

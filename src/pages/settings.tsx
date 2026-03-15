@@ -32,6 +32,10 @@ export default function Settings() {
 
   const switchClass = mediaType === "movie" ? switchMovie : switchTv;
   const iconClass = mediaType === "movie" ? iconMovie : iconTv;
+  const avatarRingColor =
+    mediaType === "movie"
+      ? "rgb(230, 126, 34)"
+      : "rgb(16, 185, 129)";
 
   const handleLogout = () => {
     dispatch(clearAuth());
@@ -42,16 +46,21 @@ export default function Settings() {
     <main className="pt-8 pb-16">
       {/* Profile */}
       <section className="mb-10 flex flex-col items-center gap-3 py-8">
-        <Avatar className="size-20 shrink-0">
-          {user?.avatarUrl && (
-            <AvatarImage src={user.avatarUrl} alt={user.displayName} />
-          )}
-          <AvatarFallback className="text-xl font-medium">
-            {user ? getInitials(user.displayName) : "?"}
-          </AvatarFallback>
-        </Avatar>
+        <span
+          className="inline-flex shrink-0 rounded-full p-0.5"
+          style={{ border: `2px solid ${avatarRingColor}` }}
+        >
+          <Avatar className="size-20 shrink-0 after:!border-0">
+            {user?.avatarUrl && (
+              <AvatarImage src={user.avatarUrl} alt={user.displayName} />
+            )}
+            <AvatarFallback className="text-xl font-medium">
+              {user ? getInitials(user.displayName) : "?"}
+            </AvatarFallback>
+          </Avatar>
+        </span>
         {user && (
-          <div className="text-center">
+          <div className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-center dark:border-neutral-700">
             <p className="font-semibold text-foreground">{user.displayName}</p>
             <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>
@@ -62,7 +71,7 @@ export default function Settings() {
         <h2 className="mb-3 text-sm font-medium text-muted-foreground">
           Tercihler
         </h2>
-        <ul className="divide-y divide-border rounded-xl overflow-hidden bg-muted/30">
+        <ul className="divide-y divide-border rounded-xl border border-neutral-200 overflow-hidden bg-muted/30 dark:border-neutral-700">
           <li className="flex items-center justify-between gap-4 px-4 py-3">
             <div className="flex items-center gap-3">
               <div
@@ -86,7 +95,7 @@ export default function Settings() {
         </ul>
       </section>
 
-      <ul className="mt-6 rounded-xl overflow-hidden bg-muted/30">
+      <ul className="mt-6 rounded-xl border border-neutral-200 overflow-hidden bg-muted/30 dark:border-neutral-700">
         <li>
           <button
             type="button"

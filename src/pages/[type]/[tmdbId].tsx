@@ -127,7 +127,11 @@ function DetailSkeleton() {
   );
 }
 
-export default function TitleDetailPage() {
+type PageProps = {
+  initialTitle?: import("@/types/title").TitleDetail;
+};
+
+export default function TitleDetailPage({ initialTitle }: PageProps) {
   const router = useRouter();
   const { type, tmdbId } = router.query;
 
@@ -137,10 +141,12 @@ export default function TitleDetailPage() {
   const isValidType = pageType === "movie" || pageType === "series";
   const apiType = pageType === "movie" ? "MOVIE" : "SERIES";
 
-  const { data, isLoading, isError, error } = useGetTitleByTmdbQuery(
+  const hasInitialData = !!initialTitle;
+  const { data: queryData, isLoading, isError, error } = useGetTitleByTmdbQuery(
     { tmdbId: pageTmdbId, type: apiType },
-    { skip: !pageTmdbId || !isValidType }
+    { skip: hasInitialData || !pageTmdbId || !isValidType }
   );
+  const data = hasInitialData ? initialTitle : queryData;
 
   if (!router.isReady) {
     return (
@@ -166,7 +172,7 @@ export default function TitleDetailPage() {
     );
   }
 
-  if (isLoading) {
+  if (!hasInitialData && isLoading) {
     return (
       <main className="py-8">
         <DetailSkeleton />
@@ -323,14 +329,26 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!isValidType || !pageTmdbId) return { props: {} };
 
   const data = await fetchTitleByTmdb({ tmdbId: pageTmdbId, type: apiType });
-  if (!data) return { props: {} };
+  if (!data)
+    return {
+      props: {
+        scrollHeader: {
+          title: "Yükleniyor",
+          backHref: "/",
+          backAlwaysVisible: true,
+          useRouterBack: true,
+        },
+      },
+    };
 
   return {
     props: {
+      initialTitle: data,
       scrollHeader: {
         title: data.name,
         backHref: "/",
         backAlwaysVisible: true,
+        useRouterBack: true,
       },
     },
   };

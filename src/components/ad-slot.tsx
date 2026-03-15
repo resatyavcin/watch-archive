@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { cn } from "@/lib/utils";
 
@@ -30,31 +30,26 @@ export function AdSlot({
   style = { display: "block" },
 }: AdSlotProps) {
   const router = useRouter();
+  const pushedForPathRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!CLIENT_ID || typeof window !== "object") return;
+    if (!CLIENT_ID || !slot || typeof window !== "object") return;
 
-    const doPush = () => {
-      window.adsbygoogle = window.adsbygoogle || [];
-      window.adsbygoogle.push({});
-    };
+    const path = router.asPath;
+    if (pushedForPathRef.current === path) return;
+    pushedForPathRef.current = path;
 
-    const pushAds = () => {
+    const id = setTimeout(() => {
       try {
-        doPush();
-      } catch {
-        setTimeout(() => {
-          try {
-            doPush();
-          } catch (err) {
-            console.error("AdSense push retry failed:", err);
-          }
-        }, 750);
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (err) {
+        pushedForPathRef.current = null;
+        console.error("AdSense push error:", err);
       }
-    };
+    }, 100);
 
-    pushAds();
-  }, [router.asPath]);
+    return () => clearTimeout(id);
+  }, [slot, router.asPath]);
 
   if (process.env.NODE_ENV !== "production") {
     return (

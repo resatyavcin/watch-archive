@@ -45,7 +45,9 @@ const mediaToggleBase =
 const filmStyles = "bg-[#e67e22]/15 text-[#e67e22] hover:bg-[#e67e22]/25 dark:hover:bg-[#e67e22]/25";
 const diziStyles = "bg-emerald-500/15 text-emerald-600 dark:bg-emerald-400/15 dark:text-emerald-400 hover:bg-emerald-500/25 hover:text-emerald-600 dark:hover:bg-emerald-400/25 dark:hover:text-emerald-400";
 
-export function AppHeader() {
+type AppHeaderProps = { leftPadding?: boolean };
+
+export function AppHeader({ leftPadding }: AppHeaderProps = {}) {
   const dispatch = useDispatch();
   const resolvedDark = useResolvedDark();
   const mediaType = useSelector((state: RootState) => state.app.mediaType);
@@ -81,7 +83,7 @@ export function AppHeader() {
 
   return (
     <header className="flex w-full shrink-0 flex-col gap-0 pt-2 pb-1">
-      <div className="flex h-12 items-center">
+      <div className={`flex h-12 items-center ${leftPadding ? "pl-14" : ""}`}>
         <div className="flex min-w-0 flex-1 items-center justify-start gap-1">
           <button
             type="button"
