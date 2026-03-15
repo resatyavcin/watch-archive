@@ -130,7 +130,8 @@ body {
 }
 
 @keyframes media-toggle-hint {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 var(--hint-color);
   }

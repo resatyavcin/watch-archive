@@ -1,57 +1,34 @@
 "use client";
 
-import Link from "next/link";
 import { useSelector } from "react-redux";
 import { useGetPopularTitlesQuery } from "@/api/titlesApi";
-import { AdSlot } from "@/components/ad-slot";
+import { BrowseHome } from "@/components/browse-home";
 import { ScrollRow } from "@/components/scroll-row";
-import { TitleCard } from "@/components/title-card";
 import { TitleCardSkeleton } from "@/components/title-card-skeleton";
 import type { RootState } from "@/store";
 
-const AD_SLOT_INDEX = process.env.NEXT_PUBLIC_ADSENSE_SLOT_INDEX ?? "";
-
-const SKELETON_COUNT = 10;
-
-export default function Home() {
-  const type = useSelector((state: RootState) => state.app.mediaType);
-  const { data: titles = [], isLoading } = useGetPopularTitlesQuery(type);
-  const pathType = type === "tv" ? "series" : "movie";
-
+function LoadingSkeleton({ mediaType }: { mediaType: "movie" | "tv" }) {
+  const title = mediaType === "movie" ? "Popüler Filmler" : "Popüler Diziler";
   return (
-    <main className="py-8">
-      <div className="space-y-4">
-        {AD_SLOT_INDEX && (
-          <AdSlot slot={AD_SLOT_INDEX} className="min-h-[90px] sm:min-h-[120px]" />
-        )}
-        <ScrollRow
-        title={
-          <h1 className="text-base font-bold text-foreground">
-            Popular this week
-          </h1>
-        }
+    <main className="pt-4 pb-16">
+      <ScrollRow
+        title={<h2 className="text-lg font-semibold">{title}</h2>}
       >
-        {isLoading
-            ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <TitleCardSkeleton key={i} size="lg" />
-            ))
-          : titles.map((item) => (
-              <Link
-                key={item.id}
-                href={`/${pathType}/${item.id}`}
-                className="block"
-              >
-                <TitleCard
-                  poster={item.poster}
-                  title={item.title}
-                  year={item.year}
-                  type={type}
-                  size="lg"
-                />
-              </Link>
-            ))}
+        {Array.from({ length: 8 }).map((_, i) => (
+          <TitleCardSkeleton key={i} size="lg" />
+        ))}
       </ScrollRow>
-      </div>
     </main>
   );
+}
+
+export default function Home() {
+  const mediaType = useSelector((state: RootState) => state.app.mediaType);
+  const { isLoading: browseLoading } = useGetPopularTitlesQuery(mediaType);
+
+  if (browseLoading) {
+    return <LoadingSkeleton mediaType={mediaType} />;
+  }
+
+  return <BrowseHome />;
 }

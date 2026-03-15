@@ -1,11 +1,20 @@
 "use client";
 
 import { LogOut, Shield } from "lucide-react";
+import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
-import { setAllowAdult } from "@/store";
+import { clearAuth, setAllowAdult } from "@/store";
 import type { RootState } from "@/store";
+
+function getInitials(displayName: string): string {
+  const parts = displayName.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return displayName.slice(0, 2).toUpperCase() || "?";
+}
 
 const switchMovie =
   "data-[state=checked]:bg-[#e67e22] data-[state=unchecked]:bg-[#e67e22]/20 dark:data-[state=unchecked]:bg-[#e67e22]/20";
@@ -15,20 +24,38 @@ const iconMovie = "text-[#e67e22]";
 const iconTv = "text-emerald-600 dark:text-emerald-400";
 
 export default function Settings() {
+  const router = useRouter();
   const dispatch = useDispatch();
   const allowAdult = useSelector((state: RootState) => state.app.allowAdult);
   const mediaType = useSelector((state: RootState) => state.app.mediaType);
+  const user = useSelector((state: RootState) => state.app.auth.user);
 
   const switchClass = mediaType === "movie" ? switchMovie : switchTv;
   const iconClass = mediaType === "movie" ? iconMovie : iconTv;
 
+  const handleLogout = () => {
+    dispatch(clearAuth());
+    router.replace("/");
+  };
+
   return (
     <main className="pt-8 pb-16">
-      {/* Profile - dummy for now */}
-      <section className="mb-10 flex flex-col items-center py-8">
+      {/* Profile */}
+      <section className="mb-10 flex flex-col items-center gap-3 py-8">
         <Avatar className="size-20 shrink-0">
-          <AvatarFallback className="text-xl font-medium">KA</AvatarFallback>
+          {user?.avatarUrl && (
+            <AvatarImage src={user.avatarUrl} alt={user.displayName} />
+          )}
+          <AvatarFallback className="text-xl font-medium">
+            {user ? getInitials(user.displayName) : "?"}
+          </AvatarFallback>
         </Avatar>
+        {user && (
+          <div className="text-center">
+            <p className="font-semibold text-foreground">{user.displayName}</p>
+            <p className="text-sm text-muted-foreground">{user.email}</p>
+          </div>
+        )}
       </section>
 
       <section className="mt-6">
@@ -63,6 +90,7 @@ export default function Settings() {
         <li>
           <button
             type="button"
+            onClick={handleLogout}
             className="group flex w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-200 hover:bg-muted/50"
           >
             <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted transition-colors duration-200 group-hover:bg-destructive/10">
@@ -87,7 +115,7 @@ export async function getStaticProps() {
   return {
     props: {
       scrollHeader: {
-        title: "Kullanıcı Adı",
+        title: "Profilim",
         backHref: "/",
       },
     },

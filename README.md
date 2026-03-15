@@ -51,6 +51,9 @@ npm install
 # Backend API (browse ve titles için gerekli)
 API_URL=https://your-api-url.com
 
+# Google Sign-In (login için gerekli)
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+
 # Opsiyonel: Destek modalı için Buy Me a Coffee linki
 NEXT_PUBLIC_BUYMEACOFFEE_URL=https://buymeacoffee.com/yourusername
 ```

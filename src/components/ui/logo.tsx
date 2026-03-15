@@ -5,8 +5,16 @@ export type MediaType = "movie" | "tv";
 export function Logo({
   className,
   mediaType = "movie",
+  light,
+  hideBadge,
   ...props
-}: React.ComponentPropsWithoutRef<"h1"> & { mediaType?: MediaType }) {
+}: React.ComponentPropsWithoutRef<"h1"> & {
+  mediaType?: MediaType;
+  /** Use on dark backgrounds - white/light text */
+  light?: boolean;
+  /** Hide the PRO badge */
+  hideBadge?: boolean;
+}) {
   const archiveColor =
     mediaType === "movie"
       ? "text-[#e67e22]"
@@ -28,17 +36,20 @@ export function Logo({
       )}
       {...props}
     >
-      <span className="text-foreground">Watch</span>
-      <span className={archiveColor}>Archive</span>
-      <span
-        className={cn(
-          "self-center ml-1 px-1.5 py-0.5 text-[10px] font-bold",
-          badgeBg,
-          badgeColor
-        )}
-      >
-        PRO
-      </span>
+      <span className={light ? "text-white" : "text-foreground"}>Watch</span>
+      <span className={light ? "text-[#e67e22]" : archiveColor}>Archive</span>
+      {!hideBadge && (
+        <span
+          className={cn(
+            "self-center ml-1 px-1.5 py-0.5 text-[10px] font-bold",
+            light
+              ? "rounded border border-white/20 bg-white/10 text-white"
+              : cn(badgeBg, badgeColor),
+          )}
+        >
+          PRO
+        </span>
+      )}
     </h1>
   );
 }

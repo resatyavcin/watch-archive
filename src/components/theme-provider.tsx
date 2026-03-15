@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getStoredAllowAdult, getStoredTheme, hydrateAllowAdult, hydrateTheme } from "@/store";
+import {
+  getStoredAllowAdult,
+  getStoredAuth,
+  getStoredTheme,
+  hydrateAllowAdult,
+  hydrateAuth,
+  hydrateTheme,
+  setAuthHydrated,
+} from "@/store";
 import type { RootState } from "@/store";
 
 function useResolvedDark() {
@@ -35,6 +43,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     dispatch(hydrateTheme(getStoredTheme()));
     dispatch(hydrateAllowAdult(getStoredAllowAdult()));
+    const storedAuth = getStoredAuth();
+    if (storedAuth) dispatch(hydrateAuth(storedAuth));
+    dispatch(setAuthHydrated());
   }, [dispatch]);
 
   useEffect(() => {

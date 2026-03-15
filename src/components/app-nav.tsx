@@ -4,9 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, User } from "lucide-react";
 import { useSelector } from "react-redux";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import type { RootState } from "@/store";
+
+function getInitials(displayName: string): string {
+  const parts = displayName.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return displayName.slice(0, 2).toUpperCase() || "?";
+}
 
 const navLinkDesktopClass =
   "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
@@ -14,6 +22,7 @@ const navLinkDesktopClass =
 export function AppNav() {
   const pathname = usePathname();
   const mediaType = useSelector((state: RootState) => state.app.mediaType);
+  const user = useSelector((state: RootState) => state.app.auth.user);
   const isHome = pathname === "/";
   const isSettings = pathname === "/settings";
 
@@ -51,11 +60,18 @@ export function AppNav() {
           )}
         >
           <Avatar size="sm" className="shrink-0">
+            {user?.avatarUrl && (
+              <AvatarImage src={user.avatarUrl} alt={user.displayName} />
+            )}
             <AvatarFallback>
-              <User className="size-3.5" />
+              {user ? (
+                getInitials(user.displayName)
+              ) : (
+                <User className="size-3.5" />
+              )}
             </AvatarFallback>
           </Avatar>
-          Profilim
+          {user?.displayName ?? "Profilim"}
         </Link>
       </nav>
 
@@ -85,11 +101,18 @@ export function AppNav() {
                 ? activeTheme
                 : "text-muted-foreground hover:text-foreground/80 active:bg-muted/60",
             )}
-            aria-label="Profilim"
+            aria-label={user?.displayName ?? "Profilim"}
           >
             <Avatar size="lg" className="shrink-0">
+              {user?.avatarUrl && (
+                <AvatarImage src={user.avatarUrl} alt={user.displayName} />
+              )}
               <AvatarFallback>
-                <User className="size-5" />
+                {user ? (
+                  getInitials(user.displayName)
+                ) : (
+                  <User className="size-5" />
+                )}
               </AvatarFallback>
             </Avatar>
           </Link>

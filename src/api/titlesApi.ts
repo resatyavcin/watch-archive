@@ -40,6 +40,10 @@ export const titlesApi = createApi({
       transformResponse: (response: PopularBrowseResponse, _meta, type) =>
         response.popular.map((item) => toTitle(item, type)),
     }),
+    getPopularBrowse: builder.query<PopularBrowseResponse, "movie" | "tv">({
+      query: (type) =>
+        `/api/browse/popular?type=${type === "tv" ? "SERIES" : "MOVIE"}`,
+    }),
     getTitleByTmdb: builder.query<
       TitleDetail,
       { tmdbId: string; type: "MOVIE" | "SERIES" }
@@ -50,4 +54,8 @@ export const titlesApi = createApi({
   }),
 });
 
-export const { useGetPopularTitlesQuery, useGetTitleByTmdbQuery } = titlesApi;
+export const {
+  useGetPopularTitlesQuery,
+  useGetPopularBrowseQuery,
+  useGetTitleByTmdbQuery,
+} = titlesApi;

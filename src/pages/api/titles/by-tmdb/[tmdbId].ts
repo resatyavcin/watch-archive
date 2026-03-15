@@ -1,15 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-
-const API_BASE = process.env.API_URL;
+import {
+  proxyToBackend,
+  requireApiBase,
+  requireMethod,
+} from "@/lib/api-proxy";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", ["GET"]);
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (!requireMethod(req, res, ["GET"])) return;
 
   const { tmdbId } = req.query;
   const type = req.query.type as string;
@@ -24,22 +24,15 @@ export default async function handler(
       .json({ error: "Invalid type: use MOVIE or SERIES" });
   }
 
-  if (!API_BASE) {
-    console.error("API_URL env is not set");
-    return res.status(500).json({ error: "API configuration missing" });
-  }
+  const base = requireApiBase(res);
+  if (!base) return;
 
   try {
-    const response = await fetch(
-      `${API_BASE}/api/v0/titles/by-tmdb/${tmdbId}?type=${type}`
+    const { status, data } = await proxyToBackend(
+      base,
+      `/api/v0/titles/by-tmdb/${tmdbId}?type=${type}`
     );
-    const data = await response.json();
-
-    if (!response.ok) {
-      return res.status(response.status).json(data);
-    }
-
-    return res.status(200).json(data);
+    return res.status(status).json(data);
   } catch (error) {
     console.error("Title by-tmdb proxy error:", error);
     return res.status(500).json({ error: "Failed to fetch from API" });
